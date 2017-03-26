@@ -311,12 +311,24 @@ branch* receive_input(char const* f) {
     add_branch(root, (float)size);
 
     while( fscanf(file, "%hd %hd %hd", &x, &y, &z) != EOF ) {
-        if( (aux = add_cell(root, size, x, y, z) ) == NULL) return NULL;
-        aux->neighbors[0] = find_path(root, size, (x - 1) % size, y, z);
+        if ( (aux = add_cell(root, size, x, y, z) ) == NULL) return NULL;
+        if ( x - 1 < 0 ) {
+            aux->neighbors[0] = find_path(root, size, (x - 1) % size, y, z);
+        } else {
+            aux->neighbors[0] = find_path(root, size, size - 1, y, z);
+        }
         aux->neighbors[2] = find_path(root, size, (x + 1) % size, y, z);
-        aux->neighbors[1] = find_path(root, size, x, (y - 1) % size, z);
+        if ( y - 1 < 0 ) {
+            aux->neighbors[1] = find_path(root, size, x, size - 1, z);
+        } else {
+            aux->neighbors[1] = find_path(root, size, x, (y - 1) % size, z);
+        }
         aux->neighbors[3] = find_path(root, size, x, (y + 1) % size, z);
-        aux->neighbors[4] = find_path(root, size, x, y, (z - 1) % size);
+        if ( z - 1 < 0 ) {
+            aux->neighbors[4] = find_path(root, size, x, y, size - 1);
+        } else {
+            aux->neighbors[4] = find_path(root, size, x, y, (z - 1) % size);
+        }
         aux->neighbors[5] = find_path(root, size, x, y, (z + 1) % size);
     }
 
