@@ -18,10 +18,31 @@ typedef struct branch {
     cell** cells;
 } branch;
 
+void cleanup(branch* b) {
+    for (int i = 0; i < N_BRANCHS; i++) {
+        if ( b->children != NULL ) {
+            cleanup(b);
+        } else {
+            for (int j = 0; j < N_BRANCHS; j++) {
+                if( b->cells[j] != NULL )  {
+                    free( b->cells[j] );
+                }
+            }
+            break;
+        }
+    }
+
+    free(b);
+}
+
 void add_branch(branch* b, float size){
     if( size / 2 <= 1 ) {
         b->children = NULL;
         b->cells = malloc( N_BRANCHS * sizeof(cell*) );
+
+        for (int i = 0; i < N_BRANCHS; i++) {
+            b->cells[i] = NULL;
+        }
     } else {
         b->children = malloc( N_BRANCHS * sizeof(branch) );
         b->cells = NULL;
@@ -277,7 +298,7 @@ cell* add_cell(branch* root, int size, short x, short y, short z) {
     return c;
 }
 
-void* receive_input(char const* f) {
+branch* receive_input(char const* f) {
     FILE* file = fopen(f,"r");
     short x, y, z;
     branch* root = malloc( sizeof(branch) );
@@ -285,6 +306,8 @@ void* receive_input(char const* f) {
     int size;
 
     if ( file == NULL || root == NULL ) return NULL;
+
+    printf("[RECEIVE INPUT]\n");
 
     fscanf(file, "%d", &(size));
 
@@ -302,19 +325,23 @@ void* receive_input(char const* f) {
 
     fclose(file);
 
-    return NULL;
+    return root;
 }
 
-void start_game(int it) {
+void start_game(int it, branch* root) {
+    printf("[START GAME]\n");
 
+    
+    cleanup(root);
 }
 
 int main(int argc, char const *argv[]) {
+    branch* root;
     int it;
 
     if (argc > 2) {
         if ( (it = atoi(argv[2])) == 0 ) return 1;
-        if ( receive_input( argv[1] ) != NULL ) start_game(it);
+        if ( ( root = receive_input( argv[1] ) ) != NULL ) start_game(it, root);
     } else {
         printf("Not enough args: requires 2\n");
     }
