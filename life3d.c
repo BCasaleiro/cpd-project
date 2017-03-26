@@ -19,20 +19,17 @@ typedef struct branch {
 } branch;
 
 void cleanup(branch* b) {
-    for (int i = 0; i < N_BRANCHS; i++) {
-        if ( b->children != NULL ) {
-            cleanup(b);
-        } else {
-            for (int j = 0; j < N_BRANCHS; j++) {
-                if( b->cells[j] != NULL )  {
-                    free( b->cells[j] );
-                }
-            }
-            break;
+    if ( b->children != NULL ) {
+        for (int i = 0; i < N_BRANCHS; i++) {
+            cleanup(&(b->children[i]));
         }
+        free(b->children);
+    } else {
+        for (int i = 0; i < N_BRANCHS; i++) {
+            if( b->cells[i] != NULL ) free( b->cells[i] );
+        }
+        free(b->cells);
     }
-
-    free(b);
 }
 
 void add_branch(branch* b, float size){
@@ -314,7 +311,7 @@ branch* receive_input(char const* f) {
     add_branch(root, (float)size);
 
     while( fscanf(file, "%hd %hd %hd", &x, &y, &z) != EOF ) {
-        aux = add_cell(root, size, x, y, z);
+        if( (aux = add_cell(root, size, x, y, z) ) == NULL) return NULL;
         aux->neighbors[0] = find_path(root, size, (x - 1) % size, y, z);
         aux->neighbors[2] = find_path(root, size, (x + 1) % size, y, z);
         aux->neighbors[1] = find_path(root, size, x, (y - 1) % size, z);
@@ -331,7 +328,7 @@ branch* receive_input(char const* f) {
 void start_game(int it, branch* root) {
     printf("[START GAME]\n");
 
-    
+
     cleanup(root);
 }
 
@@ -342,6 +339,7 @@ int main(int argc, char const *argv[]) {
     if (argc > 2) {
         if ( (it = atoi(argv[2])) == 0 ) return 1;
         if ( ( root = receive_input( argv[1] ) ) != NULL ) start_game(it, root);
+        free(root);
     } else {
         printf("Not enough args: requires 2\n");
     }
