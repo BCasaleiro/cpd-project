@@ -325,11 +325,19 @@ branch* receive_input(char const* f) {
     return root;
 }
 
+void cycle(int it, branch* root) {
+
+}
+
 void start_game(int it, branch* root) {
     printf("[START GAME]\n");
 
+    for (int i = 0; i < it; i++) {
+        cycle(it, root);
+    }
 
     cleanup(root);
+    free(root);
 }
 
 int main(int argc, char const *argv[]) {
@@ -339,7 +347,6 @@ int main(int argc, char const *argv[]) {
     if (argc > 2) {
         if ( (it = atoi(argv[2])) == 0 ) return 1;
         if ( ( root = receive_input( argv[1] ) ) != NULL ) start_game(it, root);
-        free(root);
     } else {
         printf("Not enough args: requires 2\n");
     }
