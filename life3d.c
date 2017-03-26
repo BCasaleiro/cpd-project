@@ -2,16 +2,296 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-char* receive_input(char const* f) {
+#define N_BRANCHS 8
+#define N_NEIGHBORS 6
+
+typedef struct cell cell;
+typedef struct cell {
+    cell** neighbors[6];
+    bool checked[2];
+    bool alive[2];
+} cell;
+
+typedef struct branch branch;
+typedef struct branch {
+    branch* children;
+    cell** cells;
+} branch;
+
+void add_branch(branch* b, float size){
+    if( size / 2 <= 1 ) {
+        b->children = NULL;
+        b->cells = malloc( N_BRANCHS * sizeof(cell*) );
+    } else {
+        b->children = malloc( N_BRANCHS * sizeof(branch) );
+        b->cells = NULL;
+        for (int i = 0; i < N_BRANCHS; i++) {
+            add_branch(&(b->children[i]), size / 2);
+        }
+    }
+}
+
+cell* find_path(branch* root, int size, short x, short y, short z) {
+    short acmx, acmy, acmz;
+    float s = (float)size;
+    branch* aux = root;
+
+    acmx = acmy = acmz = 0;
+
+    acmx = acmy = acmz = 0;
+    while ( true ) {
+        s /= 2;
+
+        if ( x >= acmx + s ) {
+
+            if ( y >= acmy + s ) {
+
+                if ( z >= acmz + s ) {
+
+                    if ( s <= 1 ) {
+                        return aux->cells[3];
+                    } else {
+                        aux = &(aux->children[3]);
+                    }
+
+                    acmz += s;
+                } else {
+
+                    if ( s <= 1 ) {
+                        return aux->cells[7];
+                    } else {
+                        aux = &(aux->children[7]);
+                    }
+
+                }
+
+                acmy += s;
+
+            } else {
+
+                if ( z >= acmz + s ) {
+
+                    if ( s <= 1 ) {
+                        return aux->cells[1];
+                    } else {
+                        aux = &(aux->children[1]);
+                    }
+
+                    acmz += s;
+                } else {
+
+                    if ( s <= 1 ) {
+                        return aux->cells[5];
+                    } else {
+                        aux = &(aux->children[5]);
+                    }
+
+                }
+
+            }
+
+            acmx += s;
+
+        } else {
+
+            if ( y >= acmy + s ) {
+
+                if ( z >= acmz + s ) {
+
+                    if ( s <= 1 ) {
+                        return aux->cells[2];
+                    } else {
+                        aux = &(aux->children[2]);
+                    }
+
+                    acmz += s;
+                } else {
+
+                    if ( s <= 1 ) {
+                        return aux->cells[6];
+                    } else {
+                        aux = &(aux->children[6]);
+                    }
+
+                }
+
+                acmy += s;
+
+            } else {
+
+                if ( z >= acmz + s ) {
+
+                    if ( s <= 1 ) {
+                        return aux->cells[0];
+                    } else {
+                        aux = &(aux->children[0]);
+                    }
+
+                    acmz += s;
+                } else {
+
+                    if ( s <= 1 ) {
+                        return aux->cells[4];
+                    } else {
+                        aux = &(aux->children[4]);
+                    }
+
+                }
+
+            }
+
+        }
+    }
+}
+
+cell* add_cell(branch* root, int size, short x, short y, short z, bool alive) {
+    cell* c = malloc( sizeof(cell) );
+    float acmx, acmy, acmz;
+    float s = (float)size;
+    branch* aux = root;
+
+    if (c == NULL) return NULL;
+
+    c->alive[0] = alive;
+    c->alive[1] = false;
+    c->checked[0] = false;
+    c->checked[1] = false;
+
+    // printf("[CELL] x: %hd\ty: %hd\tz: %hd\t\n", x, y, z);
+
+    acmx = acmy = acmz = 0.0;
+    while ( true ) {
+        s /= 2;
+
+        // printf("------ s: %f\tacmx + s: %f\tacmy + s: %f\tacmz + s: %f\n", s, (acmx + s), (acmy + s), (acmz + s));
+
+        if ( x >= acmx + s ) {
+
+            if ( y >= acmy + s ) {
+
+                if ( z >= acmz + s ) {
+
+                    if ( s <= 1 ) {
+                        aux->cells[3] = c;
+                        return aux->cells[3];
+                    } else {
+                        aux = &(aux->children[3]);
+                    }
+
+                    acmz += s;
+                } else {
+
+                    if ( s <= 1 ) {
+                        aux->cells[7] = c;
+                        return aux->cells[7];
+                    } else {
+                        aux = &(aux->children[7]);
+                    }
+
+                }
+
+                acmy += s;
+
+            } else {
+
+                if ( z >= acmz + s ) {
+
+                    if ( s <= 1 ) {
+                        aux->cells[1] = c;
+                        return aux->cells[1];
+                    } else {
+                        aux = &(aux->children[1]);
+                    }
+
+                    acmz += s;
+                } else {
+
+                    if ( s <= 1 ) {
+                        aux->cells[5] = c;
+                        return aux->cells[5];
+                    } else {
+                        aux = &(aux->children[5]);
+                    }
+
+                }
+
+            }
+
+            acmx += s;
+
+        } else {
+
+            if ( y >= acmy + s ) {
+
+                if ( z >= acmz + s ) {
+
+                    if ( s <= 1 ) {
+                        aux->cells[2] = c;
+                        return aux->cells[2];
+                    } else {
+                        aux = &(aux->children[2]);
+                    }
+
+                    acmz += s;
+                } else {
+
+                    if ( s <= 1 ) {
+                        aux->cells[6] = c;
+                        return aux->cells[6];
+                    } else {
+                        aux = &(aux->children[6]);
+                    }
+
+                }
+
+                acmy += s;
+
+            } else {
+
+                if ( z >= acmz + s ) {
+
+                    if ( s <= 1 ) {
+                        aux->cells[0] = c;
+                        return aux->cells[0];
+                    } else {
+                        aux = &(aux->children[0]);
+                    }
+
+                    acmz += s;
+                } else {
+
+                    if ( s <= 1 ) {
+                        aux->cells[4] = c;
+                        return aux->cells[4];
+                    } else {
+                        aux = &(aux->children[4]);
+                    }
+
+                }
+
+            }
+
+        }
+    }
+
+    return c;
+}
+
+void* receive_input(char const* f) {
     FILE* file = fopen(f,"r");
-    int x, y, z, size;
+    short x, y, z;
+    branch* root = malloc( sizeof(branch) );
+    cell* aux;
+    int size;
 
-    if ( file == NULL) return NULL;
+    if ( file == NULL || root == NULL ) return NULL;
 
-    fscanf(file, "%d", &size);
+    fscanf(file, "%d", &(size));
 
-    while( fscanf(file, "%d %d %d", &x, &y, &z) != EOF ) {
+    add_branch(root, (float)size);
 
+    while( fscanf(file, "%hd %hd %hd", &x, &y, &z) != EOF ) {
+        aux = add_cell(root, size, x, y, z, true);
     }
 
     fclose(file);
@@ -19,7 +299,7 @@ char* receive_input(char const* f) {
     return NULL;
 }
 
-void start_game() {
+void start_game(int it) {
 
 }
 
@@ -28,7 +308,7 @@ int main(int argc, char const *argv[]) {
 
     if (argc > 2) {
         if ( (it = atoi(argv[2])) == 0 ) return 1;
-        if ( receive_input( argv[1] ) != NULL ) start_game();
+        if ( receive_input( argv[1] ) != NULL ) start_game(it);
     } else {
         printf("Not enough args: requires 2\n");
     }
