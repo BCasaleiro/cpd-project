@@ -31,7 +31,7 @@ void add_branch(branch* b, float size){
     }
 }
 
-cell* find_path(branch* root, int size, short x, short y, short z) {
+cell** find_path(branch* root, int size, short x, short y, short z) {
     short acmx, acmy, acmz;
     float s = (float)size;
     branch* aux = root;
@@ -49,7 +49,7 @@ cell* find_path(branch* root, int size, short x, short y, short z) {
                 if ( z >= acmz + s ) {
 
                     if ( s <= 1 ) {
-                        return aux->cells[3];
+                        return &(aux->cells[3]);
                     } else {
                         aux = &(aux->children[3]);
                     }
@@ -58,7 +58,7 @@ cell* find_path(branch* root, int size, short x, short y, short z) {
                 } else {
 
                     if ( s <= 1 ) {
-                        return aux->cells[7];
+                        return &(aux->cells[7]);
                     } else {
                         aux = &(aux->children[7]);
                     }
@@ -72,7 +72,7 @@ cell* find_path(branch* root, int size, short x, short y, short z) {
                 if ( z >= acmz + s ) {
 
                     if ( s <= 1 ) {
-                        return aux->cells[1];
+                        return &(aux->cells[1]);
                     } else {
                         aux = &(aux->children[1]);
                     }
@@ -81,7 +81,7 @@ cell* find_path(branch* root, int size, short x, short y, short z) {
                 } else {
 
                     if ( s <= 1 ) {
-                        return aux->cells[5];
+                        return &(aux->cells[5]);
                     } else {
                         aux = &(aux->children[5]);
                     }
@@ -99,7 +99,7 @@ cell* find_path(branch* root, int size, short x, short y, short z) {
                 if ( z >= acmz + s ) {
 
                     if ( s <= 1 ) {
-                        return aux->cells[2];
+                        return &(aux->cells[2]);
                     } else {
                         aux = &(aux->children[2]);
                     }
@@ -108,7 +108,7 @@ cell* find_path(branch* root, int size, short x, short y, short z) {
                 } else {
 
                     if ( s <= 1 ) {
-                        return aux->cells[6];
+                        return &(aux->cells[6]);
                     } else {
                         aux = &(aux->children[6]);
                     }
@@ -122,7 +122,7 @@ cell* find_path(branch* root, int size, short x, short y, short z) {
                 if ( z >= acmz + s ) {
 
                     if ( s <= 1 ) {
-                        return aux->cells[0];
+                        return &(aux->cells[0]);
                     } else {
                         aux = &(aux->children[0]);
                     }
@@ -131,7 +131,7 @@ cell* find_path(branch* root, int size, short x, short y, short z) {
                 } else {
 
                     if ( s <= 1 ) {
-                        return aux->cells[4];
+                        return &(aux->cells[4]);
                     } else {
                         aux = &(aux->children[4]);
                     }
@@ -144,7 +144,7 @@ cell* find_path(branch* root, int size, short x, short y, short z) {
     }
 }
 
-cell* add_cell(branch* root, int size, short x, short y, short z, bool alive) {
+cell* add_cell(branch* root, int size, short x, short y, short z) {
     cell* c = malloc( sizeof(cell) );
     float acmx, acmy, acmz;
     float s = (float)size;
@@ -152,7 +152,7 @@ cell* add_cell(branch* root, int size, short x, short y, short z, bool alive) {
 
     if (c == NULL) return NULL;
 
-    c->alive[0] = alive;
+    c->alive[0] = true;
     c->alive[1] = false;
     c->checked[0] = false;
     c->checked[1] = false;
@@ -291,7 +291,13 @@ void* receive_input(char const* f) {
     add_branch(root, (float)size);
 
     while( fscanf(file, "%hd %hd %hd", &x, &y, &z) != EOF ) {
-        aux = add_cell(root, size, x, y, z, true);
+        aux = add_cell(root, size, x, y, z);
+        aux->neighbors[0] = find_path(root, size, (x - 1) % size, y, z);
+        aux->neighbors[2] = find_path(root, size, (x + 1) % size, y, z);
+        aux->neighbors[1] = find_path(root, size, x, (y - 1) % size, z);
+        aux->neighbors[3] = find_path(root, size, x, (y + 1) % size, z);
+        aux->neighbors[4] = find_path(root, size, x, y, (z - 1) % size);
+        aux->neighbors[5] = find_path(root, size, x, y, (z + 1) % size);
     }
 
     fclose(file);
