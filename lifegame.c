@@ -40,5 +40,6 @@ int main(int argc, char *argv[]) {
   free(insert);
   freeTree(hash1, n);
   fclose(fp);
+  printf("live cells at result.out\n");
   return 0;
 }
