@@ -587,7 +587,9 @@ void cycle(branch* b, int size) {
         }
     } else {
         for (int i = 0; i < N_BRANCHS; i++) {
-            process_cell(b, b->cells[i]);
+            if (b->cells[i] != NULL) {
+                process_cell(b, b->cells[i]);
+            }
         }
     }
 }
