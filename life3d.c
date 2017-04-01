@@ -520,7 +520,7 @@ cell* count_neighbors(branch* root, int size, short x, short y, short z, bool al
 void process_cell(branch* b, cell* c) {
     int i;
     for (i = 0; i < N_NEIGHBORS; i++) {
-        if ( *c->neighbors[i] != NULL ) {
+        if ( c->neighbors[i] != NULL && *c->neighbors[i] != NULL ) {
             c->neig_counter += 1;
         } else {
             switch (i) {
