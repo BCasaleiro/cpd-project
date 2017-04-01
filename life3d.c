@@ -520,46 +520,44 @@ cell* count_neighbors(branch* root, int size, short x, short y, short z, bool al
 void process_cell(branch* b, cell* c) {
     int i;
     for (i = 0; i < N_NEIGHBORS; i++) {
-        if ( c->neighbors[i] != NULL) {
-            if( *c->neighbors[i] != NULL ) {
+        if ( c->neighbors[i] != NULL && c->neighbors[i] != 0xffffffff &&  *c->neighbors[i] != NULL) {
             c->neig_counter += 1;
-            } else {
-                switch (i) {
-                    case 0:
-                        if ( c->x - 1 < 0 ) {
-                            count_neighbors(b, megasize, megasize - 1, c->y, c->z, false);
-                        } else {
-                            count_neighbors(b, megasize, (c->x - 1) % megasize, c->y, c->z, false);
-                        }
-                        break;
-                    case 1:
-                        if ( c->y - 1 < 0 ) {
-                            count_neighbors(b, megasize, c->x, megasize - 1, c->z, false);
-                        } else {
-                            count_neighbors(b, megasize, c->x, (c->y - 1) % megasize, c->z, false);
-                        }
-                        break;
-                    case 2:
+        } else {
+            switch (i) {
+                case 0:
+                    if ( c->x - 1 < 0 ) {
+                        count_neighbors(b, megasize, megasize - 1, c->y, c->z, false);
+                    } else {
                         count_neighbors(b, megasize, (c->x - 1) % megasize, c->y, c->z, false);
-                        break;
-                    case 3:
+                    }
+                    break;
+                case 1:
+                    if ( c->y - 1 < 0 ) {
+                        count_neighbors(b, megasize, c->x, megasize - 1, c->z, false);
+                    } else {
                         count_neighbors(b, megasize, c->x, (c->y - 1) % megasize, c->z, false);
-                        break;
-                    case 4:
-                        if ( c->z - 1 < 0 ) {
-                            count_neighbors(b, megasize, c->x, c->y, megasize - 1, false);
-                        } else {
-                            count_neighbors(b, megasize, c->x, c->y, (c->z - 1) % megasize, false);
-                        }
-                        break;
-                    case 5:
+                    }
+                    break;
+                case 2:
+                    count_neighbors(b, megasize, (c->x - 1) % megasize, c->y, c->z, false);
+                    break;
+                case 3:
+                    count_neighbors(b, megasize, c->x, (c->y - 1) % megasize, c->z, false);
+                    break;
+                case 4:
+                    if ( c->z - 1 < 0 ) {
+                        count_neighbors(b, megasize, c->x, c->y, megasize - 1, false);
+                    } else {
                         count_neighbors(b, megasize, c->x, c->y, (c->z - 1) % megasize, false);
-                        break;
-                    default:
-                        printf("ERRO!!\n");
-                }
-
+                    }
+                    break;
+                case 5:
+                    count_neighbors(b, megasize, c->x, c->y, (c->z - 1) % megasize, false);
+                    break;
+                default:
+                    printf("ERRO!!\n");
             }
+
         }
     }
 }
@@ -573,7 +571,6 @@ void clean_cycle(branch* b) {
     } else {
         for (i = 0; i < N_BRANCHS; i++) {
             if ( b->cells[i] != NULL ) {
-                // 8 é porque já foi processado neste ciclo
                 if (b->cells[i]->alive && b->cells[i]->neig_counter >= 2 && b->cells[i]->neig_counter <= 4) {
                     b->cells[i]->neig_counter = 0;
                 } else if (!(b->cells[i]->alive) && b->cells[i]->neig_counter == 2 && b->cells[i]->neig_counter == 3) {
