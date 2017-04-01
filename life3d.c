@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 #define N_BRANCHS 8
 #define N_NEIGHBORS 6
@@ -375,7 +376,7 @@ cell* count_neighbors(branch* root, int size, short x, short y, short z, bool al
                 if ( z >= acmz + s ) {
 
                     if ( s <= 1 ) {
-                        if ( aux->cells[3] != NULL ) {
+                        if ( aux->cells[3] == NULL ) {
                             aux->cells[3] = c;
                             return aux->cells[3];
                         } else {
@@ -391,7 +392,7 @@ cell* count_neighbors(branch* root, int size, short x, short y, short z, bool al
                 } else {
 
                     if ( s <= 1 ) {
-                        if ( aux->cells[7] != NULL ) {
+                        if ( aux->cells[7] == NULL ) {
                             aux->cells[7] = c;
                             return aux->cells[7];
                         } else {
@@ -410,7 +411,7 @@ cell* count_neighbors(branch* root, int size, short x, short y, short z, bool al
                 if ( z >= acmz + s ) {
 
                     if ( s <= 1 ) {
-                        if ( aux->cells[1] != NULL ) {
+                        if ( aux->cells[1] == NULL ) {
                             aux->cells[1] = c;
                             return aux->cells[1];
                         } else {
@@ -424,7 +425,7 @@ cell* count_neighbors(branch* root, int size, short x, short y, short z, bool al
                 } else {
 
                     if ( s <= 1 ) {
-                        if ( aux->cells[5] != NULL ) {
+                        if ( aux->cells[5] == NULL ) {
                             aux->cells[5] = c;
                             return aux->cells[5];
                         } else {
@@ -447,7 +448,7 @@ cell* count_neighbors(branch* root, int size, short x, short y, short z, bool al
                 if ( z >= acmz + s ) {
 
                     if ( s <= 1 ) {
-                        if ( aux->cells[2] != NULL ) {
+                        if ( aux->cells[2] == NULL ) {
                             aux->cells[2] = c;
                             return aux->cells[2];
                         } else {
@@ -461,7 +462,7 @@ cell* count_neighbors(branch* root, int size, short x, short y, short z, bool al
                 } else {
 
                     if ( s <= 1 ) {
-                        if ( aux->cells[6] != NULL ) {
+                        if ( aux->cells[6] == NULL ) {
                             aux->cells[6] = c;
                             return aux->cells[6];
                         } else {
@@ -480,7 +481,7 @@ cell* count_neighbors(branch* root, int size, short x, short y, short z, bool al
                 if ( z >= acmz + s ) {
 
                     if ( s <= 1 ) {
-                        if ( aux->cells[0] != NULL ) {
+                        if ( aux->cells[0] == NULL ) {
                             aux->cells[0] = c;
                             return aux->cells[0];
                         } else {
@@ -494,7 +495,7 @@ cell* count_neighbors(branch* root, int size, short x, short y, short z, bool al
                 } else {
 
                     if ( s <= 1 ) {
-                        if ( aux->cells[4] != NULL ) {
+                        if ( aux->cells[4] == NULL ) {
                             aux->cells[4] = c;
                             return aux->cells[4];
                         } else {
