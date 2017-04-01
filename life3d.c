@@ -29,13 +29,14 @@ typedef struct potential {
 int megasize;
 
 void cleanup(branch* b) {
+    int i;
     if ( b->children != NULL ) {
-        for (int i = 0; i < N_BRANCHS; i++) {
+        for (i = 0; i < N_BRANCHS; i++) {
             cleanup(&(b->children[i]));
         }
         free(b->children);
     } else {
-        for (int i = 0; i < N_BRANCHS; i++) {
+        for (i = 0; i < N_BRANCHS; i++) {
             if( b->cells[i] != NULL ) free( b->cells[i] );
         }
         free(b->cells);
@@ -43,17 +44,18 @@ void cleanup(branch* b) {
 }
 
 void add_branch(branch* b, float size){
+    int i;
     if( size / 2 <= 1 ) {
         b->children = NULL;
         b->cells = malloc( N_BRANCHS * sizeof(cell*) );
 
-        for (int i = 0; i < N_BRANCHS; i++) {
+        for (i = 0; i < N_BRANCHS; i++) {
             b->cells[i] = NULL;
         }
     } else {
         b->children = malloc( N_BRANCHS * sizeof(branch) );
         b->cells = NULL;
-        for (int i = 0; i < N_BRANCHS; i++) {
+        for (i = 0; i < N_BRANCHS; i++) {
             add_branch(&(b->children[i]), size / 2);
         }
     }
@@ -516,7 +518,8 @@ cell* count_neighbors(branch* root, int size, short x, short y, short z, bool al
 }
 
 void process_cell(branch* b, cell* c) {
-    for (int i = 0; i < N_NEIGHBORS; i++) {
+    int i;
+    for (i = 0; i < N_NEIGHBORS; i++) {
         if ( *c->neighbors[i] != NULL ) {
             c->neig_counter += 1;
         } else {
@@ -560,12 +563,13 @@ void process_cell(branch* b, cell* c) {
 }
 
 void clean_cycle(branch* b) {
+    int i;
     if ( b->children != NULL ) {
-        for (int i = 0; i < N_BRANCHS; i++) {
+        for (i = 0; i < N_BRANCHS; i++) {
             clean_cycle(&(b->children[i]));
         }
     } else {
-        for (int i = 0; i < N_BRANCHS; i++) {
+        for (i = 0; i < N_BRANCHS; i++) {
             if ( b->cells[i] != NULL ) {
                 // 8 é porque já foi processado neste ciclo
                 if (b->cells[i]->alive && b->cells[i]->neig_counter >= 2 && b->cells[i]->neig_counter <= 4) {
@@ -582,12 +586,13 @@ void clean_cycle(branch* b) {
 }
 
 void cycle(branch* b, int size) {
+    int i;
     if ( b->children != NULL ) {
-        for (int i = 0; i < N_BRANCHS; i++) {
+        for (i = 0; i < N_BRANCHS; i++) {
             cycle(&(b->children[i]), size);
         }
     } else {
-        for (int i = 0; i < N_BRANCHS; i++) {
+        for (i = 0; i < N_BRANCHS; i++) {
             if (b->cells[i] != NULL) {
                 process_cell(b, b->cells[i]);
             }
@@ -596,9 +601,10 @@ void cycle(branch* b, int size) {
 }
 
 void start_game(branch* root, int it, int size) {
+    int i;
     printf("[START GAME]\n");
 
-    for (int i = 0; i < it; i++) {
+    for (i = 0; i < it; i++) {
         cycle(root, size);
         printf("cycle\n");
         clean_cycle(root);
