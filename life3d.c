@@ -598,6 +598,8 @@ void clean_cycle(branch* b) {
 
 void cycle(branch* b, int size) {
     int i;
+
+    printf("[CYCLE]");
     if ( b->children != NULL ) {
         for (i = 0; i < N_BRANCHS; i++) {
             cycle(&(b->children[i]), size);
