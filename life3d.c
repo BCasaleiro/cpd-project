@@ -54,6 +54,9 @@ void add_branch(branch* b, float size){
         }
     } else {
         b->children = malloc( N_BRANCHS * sizeof(branch) );
+        if (b->children == NULL) {
+            printf("ERRO!!\n");
+        }
         b->cells = NULL;
         for (i = 0; i < N_BRANCHS; i++) {
             add_branch(&(b->children[i]), size / 2);
@@ -517,7 +520,7 @@ cell* count_neighbors(branch* root, int size, short x, short y, short z, bool al
     return c;
 }
 
-void* process_cell(branch* b, cell* c) {
+void* process_cell(branch* root, branch* b, cell* c) {
     cell* aux;
     int i;
     for (i = 0; i < N_NEIGHBORS; i++) {
@@ -528,41 +531,41 @@ void* process_cell(branch* b, cell* c) {
                 case 0:
                     if ( c->x - 1 < 0 ) {
                         if ( (aux = count_neighbors(b, megasize, megasize - 1, c->y, c->z, false)) == NULL ) return NULL;
-                        add_neighbors(aux, b, megasize, megasize - 1, c->y, c->z);
+                        add_neighbors(aux, root, megasize, megasize - 1, c->y, c->z);
                     } else {
                         if ( (aux = count_neighbors(b, megasize, (c->x - 1) % megasize, c->y, c->z, false)) == NULL ) return NULL;
-                        add_neighbors(aux, b, megasize, (c->x - 1) % megasize, c->y, c->z);
+                        add_neighbors(aux, root, megasize, (c->x - 1) % megasize, c->y, c->z);
                     }
                     break;
                 case 1:
                     if ( c->y - 1 < 0 ) {
                         if ( (aux = count_neighbors(b, megasize, c->x, megasize - 1, c->z, false)) == NULL ) return NULL;
-                        add_neighbors(aux, b, megasize, c->x, megasize - 1, c->z);
+                        add_neighbors(aux, root, megasize, c->x, megasize - 1, c->z);
                     } else {
                         if ( (aux = count_neighbors(b, megasize, c->x, (c->y - 1) % megasize, c->z, false)) == NULL ) return NULL;
-                        add_neighbors(aux, b, megasize, c->x, (c->y - 1) % megasize, c->z);
+                        add_neighbors(aux, root, megasize, c->x, (c->y - 1) % megasize, c->z);
                     }
                     break;
                 case 2:
                     if ( (aux = count_neighbors(b, megasize, (c->x - 1) % megasize, c->y, c->z, false)) == NULL ) return NULL;
-                    add_neighbors(aux, b, megasize, (c->x - 1) % megasize, c->y, c->z);
+                    add_neighbors(aux, root, megasize, (c->x - 1) % megasize, c->y, c->z);
                     break;
                 case 3:
                     if ( (aux = count_neighbors(b, megasize, c->x, (c->y - 1) % megasize, c->z, false)) == NULL ) return NULL;
-                    add_neighbors(aux, b, megasize, c->x, (c->y - 1) % megasize, c->z);
+                    add_neighbors(aux, root, megasize, c->x, (c->y - 1) % megasize, c->z);
                     break;
                 case 4:
                     if ( c->z - 1 < 0 ) {
                         if ( (aux = count_neighbors(b, megasize, c->x, c->y, megasize - 1, false)) == NULL ) return NULL;
-                        add_neighbors(aux, b, megasize, c->x, c->y, megasize - 1);
+                        add_neighbors(aux, root, megasize, c->x, c->y, megasize - 1);
                     } else {
                         if ( (aux = count_neighbors(b, megasize, c->x, c->y, (c->z - 1) % megasize, false)) == NULL ) return NULL;
-                        add_neighbors(aux, b, megasize, c->x, c->y, (c->z - 1) % megasize);
+                        add_neighbors(aux, root, megasize, c->x, c->y, (c->z - 1) % megasize);
                     }
                     break;
                 case 5:
                     if ( (aux = count_neighbors(b, megasize, c->x, c->y, (c->z - 1) % megasize, false)) == NULL ) return NULL;
-                    add_neighbors(aux, b, megasize, c->x, c->y, (c->z - 1) % megasize);
+                    add_neighbors(aux, root, megasize, c->x, c->y, (c->z - 1) % megasize);
                     break;
                 default:
                     printf("ERRO!!\n");
@@ -596,17 +599,17 @@ void clean_cycle(branch* b) {
     }
 }
 
-void cycle(branch* b, int size) {
+void cycle(branch* root, branch* b, int size) {
     int i;
 
     if ( b->children != NULL ) {
         for (i = 0; i < N_BRANCHS; i++) {
-            cycle(&(b->children[i]), size);
+            cycle(root, &(b->children[i]), size);
         }
     } else {
         for (i = 0; i < N_BRANCHS; i++) {
             if (b->cells[i] != NULL) {
-                process_cell(b, b->cells[i]);
+                process_cell(root, b, b->cells[i]);
             }
         }
     }
@@ -634,7 +637,7 @@ void start_game(branch* root, int it, int size) {
 
     for (i = 0; i < it; i++) {
         printf("[CYCLE]\n");
-        cycle(root, size);
+        cycle(root, root, size);
         printf("[CLEAN CYCLE]\n");
         clean_cycle(root);
     }
