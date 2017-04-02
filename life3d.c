@@ -530,41 +530,41 @@ void* process_cell(branch* root, branch* b, cell* c) {
             switch (i) {
                 case 0:
                     if ( c->x - 1 < 0 ) {
-                        if ( (aux = count_neighbors(b, megasize, megasize - 1, c->y, c->z, false)) == NULL ) return NULL;
+                        if ( (aux = count_neighbors(root, megasize, megasize - 1, c->y, c->z, false)) == NULL ) return NULL;
                         add_neighbors(aux, root, megasize, megasize - 1, c->y, c->z);
                     } else {
-                        if ( (aux = count_neighbors(b, megasize, (c->x - 1) % megasize, c->y, c->z, false)) == NULL ) return NULL;
+                        if ( (aux = count_neighbors(root, megasize, (c->x - 1) % megasize, c->y, c->z, false)) == NULL ) return NULL;
                         add_neighbors(aux, root, megasize, (c->x - 1) % megasize, c->y, c->z);
                     }
                     break;
                 case 1:
                     if ( c->y - 1 < 0 ) {
-                        if ( (aux = count_neighbors(b, megasize, c->x, megasize - 1, c->z, false)) == NULL ) return NULL;
+                        if ( (aux = count_neighbors(root, megasize, c->x, megasize - 1, c->z, false)) == NULL ) return NULL;
                         add_neighbors(aux, root, megasize, c->x, megasize - 1, c->z);
                     } else {
-                        if ( (aux = count_neighbors(b, megasize, c->x, (c->y - 1) % megasize, c->z, false)) == NULL ) return NULL;
+                        if ( (aux = count_neighbors(root, megasize, c->x, (c->y - 1) % megasize, c->z, false)) == NULL ) return NULL;
                         add_neighbors(aux, root, megasize, c->x, (c->y - 1) % megasize, c->z);
                     }
                     break;
                 case 2:
-                    if ( (aux = count_neighbors(b, megasize, (c->x - 1) % megasize, c->y, c->z, false)) == NULL ) return NULL;
+                    if ( (aux = count_neighbors(root, megasize, (c->x - 1) % megasize, c->y, c->z, false)) == NULL ) return NULL;
                     add_neighbors(aux, root, megasize, (c->x - 1) % megasize, c->y, c->z);
                     break;
                 case 3:
-                    if ( (aux = count_neighbors(b, megasize, c->x, (c->y - 1) % megasize, c->z, false)) == NULL ) return NULL;
+                    if ( (aux = count_neighbors(root, megasize, c->x, (c->y - 1) % megasize, c->z, false)) == NULL ) return NULL;
                     add_neighbors(aux, root, megasize, c->x, (c->y - 1) % megasize, c->z);
                     break;
                 case 4:
                     if ( c->z - 1 < 0 ) {
-                        if ( (aux = count_neighbors(b, megasize, c->x, c->y, megasize - 1, false)) == NULL ) return NULL;
+                        if ( (aux = count_neighbors(root, megasize, c->x, c->y, megasize - 1, false)) == NULL ) return NULL;
                         add_neighbors(aux, root, megasize, c->x, c->y, megasize - 1);
                     } else {
-                        if ( (aux = count_neighbors(b, megasize, c->x, c->y, (c->z - 1) % megasize, false)) == NULL ) return NULL;
+                        if ( (aux = count_neighbors(root, megasize, c->x, c->y, (c->z - 1) % megasize, false)) == NULL ) return NULL;
                         add_neighbors(aux, root, megasize, c->x, c->y, (c->z - 1) % megasize);
                     }
                     break;
                 case 5:
-                    if ( (aux = count_neighbors(b, megasize, c->x, c->y, (c->z - 1) % megasize, false)) == NULL ) return NULL;
+                    if ( (aux = count_neighbors(root, megasize, c->x, c->y, (c->z - 1) % megasize, false)) == NULL ) return NULL;
                     add_neighbors(aux, root, megasize, c->x, c->y, (c->z - 1) % megasize);
                     break;
                 default:
