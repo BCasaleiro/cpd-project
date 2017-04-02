@@ -599,7 +599,6 @@ void clean_cycle(branch* b) {
 void cycle(branch* b, int size) {
     int i;
 
-    printf("[CYCLE]\n");
     if ( b->children != NULL ) {
         for (i = 0; i < N_BRANCHS; i++) {
             cycle(&(b->children[i]), size);
@@ -634,12 +633,16 @@ void start_game(branch* root, int it, int size) {
     printf("[START GAME]\n");
 
     for (i = 0; i < it; i++) {
+        printf("[CYCLE]\n");
         cycle(root, size);
+        printf("[CLEAN CYCLE]\n");
         clean_cycle(root);
     }
 
+    printf("[PRINT LIVE CELLS]\n");
     print_live_cells(root);
 
+    printf("[CLEANUP]\n");
     cleanup(root);
     free(root);
 }
