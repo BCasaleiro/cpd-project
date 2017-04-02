@@ -623,7 +623,7 @@ void print_live_cells(branch* b) {
     } else {
         for (i = 0; i < N_BRANCHS; i++) {
             if (b->cells[i] != NULL) {
-                printf("%d %d %d", b->cells[i]->x, b->cells[i]->y, b->cells[i]->z);
+                printf("%d %d %d\n", b->cells[i]->x, b->cells[i]->y, b->cells[i]->z);
             }
         }
     }
