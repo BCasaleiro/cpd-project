@@ -384,7 +384,7 @@ cell* count_neighbors(branch* root, int size, short x, short y, short z, bool al
                             return aux->cells[3];
                         } else {
                             aux->cells[3]->neig_counter += 1;
-                            return aux->cells[3];
+                            return NULL;
                         }
 
                         return aux->cells[3];
@@ -407,7 +407,7 @@ cell* count_neighbors(branch* root, int size, short x, short y, short z, bool al
                             return aux->cells[7];
                         } else {
                             aux->cells[7]->neig_counter += 1;
-                            return aux->cells[7];
+                            return NULL;
                         }
                     } else {
                         aux = &(aux->children[7]);
@@ -433,7 +433,7 @@ cell* count_neighbors(branch* root, int size, short x, short y, short z, bool al
                             return aux->cells[1];
                         } else {
                             aux->cells[1]->neig_counter += 1;
-                            return aux->cells[1];
+                            return NULL;
                         }
                     } else {
                         aux = &(aux->children[1]);
@@ -454,7 +454,7 @@ cell* count_neighbors(branch* root, int size, short x, short y, short z, bool al
                             return aux->cells[5];
                         } else {
                             aux->cells[5]->neig_counter += 1;
-                            return aux->cells[5];
+                            return NULL;
                         }
                     } else {
                         aux = &(aux->children[5]);
@@ -484,7 +484,7 @@ cell* count_neighbors(branch* root, int size, short x, short y, short z, bool al
                             return aux->cells[2];
                         } else {
                             aux->cells[2]->neig_counter += 1;
-                            return aux->cells[2];
+                            return NULL;
                         }
                     } else {
                         aux = &(aux->children[2]);
@@ -505,7 +505,7 @@ cell* count_neighbors(branch* root, int size, short x, short y, short z, bool al
                             return aux->cells[6];
                         } else {
                             aux->cells[6]->neig_counter += 1;
-                            return aux->cells[6];
+                            return NULL;
                         }
                     } else {
                         aux = &(aux->children[6]);
@@ -531,7 +531,7 @@ cell* count_neighbors(branch* root, int size, short x, short y, short z, bool al
                             return aux->cells[0];
                         } else {
                             aux->cells[0]->neig_counter += 1;
-                            return aux->cells[0];
+                            return NULL;
                         }
                     } else {
                         aux = &(aux->children[0]);
@@ -552,7 +552,7 @@ cell* count_neighbors(branch* root, int size, short x, short y, short z, bool al
                             return aux->cells[4];
                         } else {
                             aux->cells[4]->neig_counter += 1;
-                            return aux->cells[4];
+                            return NULL;
                         }
                     } else {
                         aux = &(aux->children[4]);
@@ -568,7 +568,7 @@ cell* count_neighbors(branch* root, int size, short x, short y, short z, bool al
     return c;
 }
 
-void* process_cell(branch* root, branch* b, cell* c) {
+void process_cell(branch* root, branch* b, cell* c) {
     cell* aux;
     int i;
     for (i = 0; i < N_NEIGHBORS; i++) {
@@ -578,42 +578,33 @@ void* process_cell(branch* root, branch* b, cell* c) {
             switch (i) {
                 case 0:
                     if ( c->x - 1 < 0 ) {
-                        if ( (aux = count_neighbors(root, megasize, megasize - 1, c->y, c->z, false)) == NULL ) return NULL;
-                        add_neighbors(aux, root, megasize, megasize - 1, c->y, c->z);
+                        if ( (aux = count_neighbors(root, megasize, megasize - 1, c->y, c->z, false)) != NULL ) add_neighbors(aux, root, megasize, megasize - 1, c->y, c->z);
                     } else {
-                        if ( (aux = count_neighbors(root, megasize, (c->x - 1) % megasize, c->y, c->z, false)) == NULL ) return NULL;
-                        add_neighbors(aux, root, megasize, (c->x - 1) % megasize, c->y, c->z);
+                        if ( (aux = count_neighbors(root, megasize, (c->x - 1) % megasize, c->y, c->z, false)) != NULL ) add_neighbors(aux, root, megasize, (c->x - 1) % megasize, c->y, c->z);
                     }
                     break;
                 case 1:
                     if ( c->y - 1 < 0 ) {
-                        if ( (aux = count_neighbors(root, megasize, c->x, megasize - 1, c->z, false)) == NULL ) return NULL;
-                        add_neighbors(aux, root, megasize, c->x, megasize - 1, c->z);
+                        if ( (aux = count_neighbors(root, megasize, c->x, megasize - 1, c->z, false)) != NULL ) add_neighbors(aux, root, megasize, c->x, megasize - 1, c->z);
                     } else {
-                        if ( (aux = count_neighbors(root, megasize, c->x, (c->y - 1) % megasize, c->z, false)) == NULL ) return NULL;
-                        add_neighbors(aux, root, megasize, c->x, (c->y - 1) % megasize, c->z);
+                        if ( (aux = count_neighbors(root, megasize, c->x, (c->y - 1) % megasize, c->z, false)) != NULL ) add_neighbors(aux, root, megasize, c->x, (c->y - 1) % megasize, c->z);
                     }
                     break;
                 case 2:
-                    if ( (aux = count_neighbors(root, megasize, (c->x - 1) % megasize, c->y, c->z, false)) == NULL ) return NULL;
-                    add_neighbors(aux, root, megasize, (c->x - 1) % megasize, c->y, c->z);
+                    if ( (aux = count_neighbors(root, megasize, (c->x - 1) % megasize, c->y, c->z, false)) != NULL ) add_neighbors(aux, root, megasize, (c->x - 1) % megasize, c->y, c->z);
                     break;
                 case 3:
-                    if ( (aux = count_neighbors(root, megasize, c->x, (c->y - 1) % megasize, c->z, false)) == NULL ) return NULL;
-                    add_neighbors(aux, root, megasize, c->x, (c->y - 1) % megasize, c->z);
+                    if ( (aux = count_neighbors(root, megasize, c->x, (c->y - 1) % megasize, c->z, false)) != NULL ) add_neighbors(aux, root, megasize, c->x, (c->y - 1) % megasize, c->z);
                     break;
                 case 4:
                     if ( c->z - 1 < 0 ) {
-                        if ( (aux = count_neighbors(root, megasize, c->x, c->y, megasize - 1, false)) == NULL ) return NULL;
-                        add_neighbors(aux, root, megasize, c->x, c->y, megasize - 1);
+                        if ( (aux = count_neighbors(root, megasize, c->x, c->y, megasize - 1, false)) != NULL ) add_neighbors(aux, root, megasize, c->x, c->y, megasize - 1);
                     } else {
-                        if ( (aux = count_neighbors(root, megasize, c->x, c->y, (c->z - 1) % megasize, false)) == NULL ) return NULL;
-                        add_neighbors(aux, root, megasize, c->x, c->y, (c->z - 1) % megasize);
+                        if ( (aux = count_neighbors(root, megasize, c->x, c->y, (c->z - 1) % megasize, false)) != NULL ) add_neighbors(aux, root, megasize, c->x, c->y, (c->z - 1) % megasize);
                     }
                     break;
                 case 5:
-                    if ( (aux = count_neighbors(root, megasize, c->x, c->y, (c->z - 1) % megasize, false)) == NULL ) return NULL;
-                    add_neighbors(aux, root, megasize, c->x, c->y, (c->z - 1) % megasize);
+                    if ( (aux = count_neighbors(root, megasize, c->x, c->y, (c->z - 1) % megasize, false)) != NULL ) add_neighbors(aux, root, megasize, c->x, c->y, (c->z - 1) % megasize);
                     break;
                 default:
                     printf("ERRO!!\n");
@@ -621,12 +612,10 @@ void* process_cell(branch* root, branch* b, cell* c) {
 
         }
     }
-
-    return aux;
 }
 
 void clean_cycle(branch* b) {
-    int i, k;
+    int i;
     if ( b->children != NULL ) {
         for (i = 0; i < N_BRANCHS; i++) {
             clean_cycle(&(b->children[i]));
@@ -636,16 +625,29 @@ void clean_cycle(branch* b) {
             if ( b->cells[i] != NULL ) {
                 if (b->cells[i]->alive && b->cells[i]->neig_counter >= 2 && b->cells[i]->neig_counter <= 4) {
                     b->cells[i]->neig_counter = 0;
-                } else if (!(b->cells[i]->alive) && b->cells[i]->neig_counter == 2 && b->cells[i]->neig_counter == 3) {
+                } else if (!(b->cells[i]->alive) && b->cells[i]->neig_counter >= 2 && b->cells[i]->neig_counter <= 3) {
                     b->cells[i]->alive = true;
                     b->cells[i]->neig_counter = 0;
                 } else {
-                    for (k = 0; k < N_NEIGHBORS; k++) {
-                        if ( *b->cells[i]->neighbors[k] != NULL ) free ( *b->cells[i]->neighbors[k] );
-                    }
-                    free( b->cells[i]->neighbors );
-                    free( b->cells[i] );
+                    free( &b->cells[i] );
+                    // b->cells[i] = NULL;
                 }
+            }
+        }
+    }
+}
+
+void print_cells(branch* b) {
+    int i;
+
+    if ( b->children != NULL ) {
+        for (i = 0; i < N_BRANCHS; i++) {
+            print_cells(&(b->children[i]));
+        }
+    } else {
+        for (i = 0; i < N_BRANCHS; i++) {
+            if (b->cells[i] != NULL) {
+                printf("%d\t%d\t%d\t%d\t%d\n", b->cells[i]->x, b->cells[i]->y, b->cells[i]->z, b->cells[i]->alive, b->cells[i]->neig_counter);
             }
         }
     }
@@ -689,9 +691,11 @@ void start_game(branch* root, int it, int size) {
     printf("[START GAME]\n");
 
     for (i = 0; i < it; i++) {
+        // print_cells(root);
         printf("[CYCLE]\n");
         cycle(root, root, size);
-        printf("[CLEAN CYCLE]\n");
+        // print_cells(root);
+        // printf("[CLEAN CYCLE]\n");
         clean_cycle(root);
     }
 
