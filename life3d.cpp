@@ -6,8 +6,10 @@
 using namespace std;
 
 char* hash_function(short x, short y, short z, float size) {
-    char* hash = (char*) malloc( (ceil( log2 (size) ) + 1) * sizeof(char) );
+    char* hash = (char*) malloc( (ceil( log2f(size) ) + 1) * sizeof(char) );
     int acmx, acmy, acmz, i;
+
+    if (hash == NULL) return NULL;
 
     acmx = acmy = acmz = i = 0;
     while (size /= 2 >= 1) {
@@ -59,7 +61,7 @@ int receive_input(const char* fp, map<char*,bool>* cells) {
     fscanf(file, "%d", &size);
 
     while( fscanf(file, "%hd %hd %hd", &x, &y, &z) != EOF ) {
-        printf("%s\n", hash_function(x, y, z, size));
+        printf("%s\n", hash_function(x, y, z, (float)size));
     }
 
     fclose(file);
