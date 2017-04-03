@@ -357,18 +357,10 @@ branch* receive_input(char const* f) {
 }
 
 cell* count_neighbors(branch* root, int size, short x, short y, short z, bool alive) {
-    cell* c = malloc( sizeof(cell) );
+    cell* c;
     float acmx, acmy, acmz;
     float s = (float)size;
     branch* aux = root;
-
-    if (c == NULL) return NULL;
-
-    c->alive = alive;
-    c->x = x;
-    c->y = y;
-    c->z = z;
-    c->neig_counter = 0;
 
     acmx = acmy = acmz = 0.0;
     while ( true ) {
@@ -382,6 +374,12 @@ cell* count_neighbors(branch* root, int size, short x, short y, short z, bool al
 
                     if ( s <= 1 ) {
                         if ( aux->cells[3] == NULL ) {
+                            c = malloc( sizeof(cell) );
+                            c->alive = alive;
+                            c->x = x;
+                            c->y = y;
+                            c->z = z;
+                            c->neig_counter = 0;
                             aux->cells[3] = c;
                             return aux->cells[3];
                         } else {
@@ -399,6 +397,12 @@ cell* count_neighbors(branch* root, int size, short x, short y, short z, bool al
 
                     if ( s <= 1 ) {
                         if ( aux->cells[7] == NULL ) {
+                            c = malloc( sizeof(cell) );
+                            c->alive = alive;
+                            c->x = x;
+                            c->y = y;
+                            c->z = z;
+                            c->neig_counter = 0;
                             aux->cells[7] = c;
                             return aux->cells[7];
                         } else {
@@ -419,6 +423,12 @@ cell* count_neighbors(branch* root, int size, short x, short y, short z, bool al
 
                     if ( s <= 1 ) {
                         if ( aux->cells[1] == NULL ) {
+                            c = malloc( sizeof(cell) );
+                            c->alive = alive;
+                            c->x = x;
+                            c->y = y;
+                            c->z = z;
+                            c->neig_counter = 0;
                             aux->cells[1] = c;
                             return aux->cells[1];
                         } else {
@@ -434,6 +444,12 @@ cell* count_neighbors(branch* root, int size, short x, short y, short z, bool al
 
                     if ( s <= 1 ) {
                         if ( aux->cells[5] == NULL ) {
+                            c = malloc( sizeof(cell) );
+                            c->alive = alive;
+                            c->x = x;
+                            c->y = y;
+                            c->z = z;
+                            c->neig_counter = 0;
                             aux->cells[5] = c;
                             return aux->cells[5];
                         } else {
@@ -458,6 +474,12 @@ cell* count_neighbors(branch* root, int size, short x, short y, short z, bool al
 
                     if ( s <= 1 ) {
                         if ( aux->cells[2] == NULL ) {
+                            c = malloc( sizeof(cell) );
+                            c->alive = alive;
+                            c->x = x;
+                            c->y = y;
+                            c->z = z;
+                            c->neig_counter = 0;
                             aux->cells[2] = c;
                             return aux->cells[2];
                         } else {
@@ -473,6 +495,12 @@ cell* count_neighbors(branch* root, int size, short x, short y, short z, bool al
 
                     if ( s <= 1 ) {
                         if ( aux->cells[6] == NULL ) {
+                            c = malloc( sizeof(cell) );
+                            c->alive = alive;
+                            c->x = x;
+                            c->y = y;
+                            c->z = z;
+                            c->neig_counter = 0;
                             aux->cells[6] = c;
                             return aux->cells[6];
                         } else {
@@ -493,6 +521,12 @@ cell* count_neighbors(branch* root, int size, short x, short y, short z, bool al
 
                     if ( s <= 1 ) {
                         if ( aux->cells[0] == NULL ) {
+                            c = malloc( sizeof(cell) );
+                            c->alive = alive;
+                            c->x = x;
+                            c->y = y;
+                            c->z = z;
+                            c->neig_counter = 0;
                             aux->cells[0] = c;
                             return aux->cells[0];
                         } else {
@@ -508,6 +542,12 @@ cell* count_neighbors(branch* root, int size, short x, short y, short z, bool al
 
                     if ( s <= 1 ) {
                         if ( aux->cells[4] == NULL ) {
+                            c = malloc( sizeof(cell) );
+                            c->alive = alive;
+                            c->x = x;
+                            c->y = y;
+                            c->z = z;
+                            c->neig_counter = 0;
                             aux->cells[4] = c;
                             return aux->cells[4];
                         } else {
@@ -617,7 +657,7 @@ void cycle(branch* root, branch* b, int size) {
     } else {
         for (i = 0; i < N_BRANCHS; i++) {
             if (b->cells[i] != NULL) {
-                printf("[PROCESS CELL]\n");
+                // printf("[PROCESS CELL]\n");
                 process_cell(root, b, b->cells[i]);
             }
         }
