@@ -386,6 +386,7 @@ cell* count_neighbors(branch* root, int size, short x, short y, short z, bool al
                             return aux->cells[3];
                         } else {
                             aux->cells[3]->neig_counter += 1;
+                            return aux->cells[3];
                         }
 
                         return aux->cells[3];
@@ -402,6 +403,7 @@ cell* count_neighbors(branch* root, int size, short x, short y, short z, bool al
                             return aux->cells[7];
                         } else {
                             aux->cells[7]->neig_counter += 1;
+                            return aux->cells[7];
                         }
                     } else {
                         aux = &(aux->children[7]);
@@ -421,6 +423,7 @@ cell* count_neighbors(branch* root, int size, short x, short y, short z, bool al
                             return aux->cells[1];
                         } else {
                             aux->cells[1]->neig_counter += 1;
+                            return aux->cells[1];
                         }
                     } else {
                         aux = &(aux->children[1]);
@@ -435,6 +438,7 @@ cell* count_neighbors(branch* root, int size, short x, short y, short z, bool al
                             return aux->cells[5];
                         } else {
                             aux->cells[5]->neig_counter += 1;
+                            return aux->cells[5];
                         }
                     } else {
                         aux = &(aux->children[5]);
@@ -458,6 +462,7 @@ cell* count_neighbors(branch* root, int size, short x, short y, short z, bool al
                             return aux->cells[2];
                         } else {
                             aux->cells[2]->neig_counter += 1;
+                            return aux->cells[2];
                         }
                     } else {
                         aux = &(aux->children[2]);
@@ -472,6 +477,7 @@ cell* count_neighbors(branch* root, int size, short x, short y, short z, bool al
                             return aux->cells[6];
                         } else {
                             aux->cells[6]->neig_counter += 1;
+                            return aux->cells[6];
                         }
                     } else {
                         aux = &(aux->children[6]);
@@ -491,6 +497,7 @@ cell* count_neighbors(branch* root, int size, short x, short y, short z, bool al
                             return aux->cells[0];
                         } else {
                             aux->cells[0]->neig_counter += 1;
+                            return aux->cells[0];
                         }
                     } else {
                         aux = &(aux->children[0]);
@@ -505,6 +512,7 @@ cell* count_neighbors(branch* root, int size, short x, short y, short z, bool al
                             return aux->cells[4];
                         } else {
                             aux->cells[4]->neig_counter += 1;
+                            return aux->cells[4];
                         }
                     } else {
                         aux = &(aux->children[4]);
