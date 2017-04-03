@@ -626,7 +626,7 @@ void* process_cell(branch* root, branch* b, cell* c) {
 }
 
 void clean_cycle(branch* b) {
-    int i, k;
+    int i;
     if ( b->children != NULL ) {
         for (i = 0; i < N_BRANCHS; i++) {
             clean_cycle(&(b->children[i]));
@@ -640,11 +640,7 @@ void clean_cycle(branch* b) {
                     b->cells[i]->alive = true;
                     b->cells[i]->neig_counter = 0;
                 } else {
-                    for (k = 0; k < N_NEIGHBORS; k++) {
-                        if(b->cells[i]->neighbors[k] != NULL) {
-                            free( b->cells[i]->neighbors[k] );
-                        }
-                    }
+                    free( b->cells[i]->neighbors );
                     free( b->cells[i] );
                 }
             }
