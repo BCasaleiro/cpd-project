@@ -609,6 +609,7 @@ void cycle(branch* root, branch* b, int size) {
     } else {
         for (i = 0; i < N_BRANCHS; i++) {
             if (b->cells[i] != NULL) {
+                printf("[PROCESS CELL]\n");
                 process_cell(root, b, b->cells[i]);
             }
         }
