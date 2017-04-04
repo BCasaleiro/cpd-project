@@ -357,7 +357,7 @@ coord* get_leaf_nodes_locations(octree * o, octree_node*o_n, char * aux_location
             if((o_n->leaf_children[i]!=NULL)){//&&(o_n->leaf_children[i]->lives == 1)){
                 aux_location[o_n->depth]=o_n->leaf_children[i]->location;
                 int * coordinates = coordinates_from_location(aux_location, max_depth);
-                coord * new_coord = malloc(sizeof(coord));
+                //coord * new_coord = malloc(sizeof(*new_coord));
                 
                 leaf_nodes_coords[index1].coords[0]=coordinates[0];
                 leaf_nodes_coords[index1].coords[1]=coordinates[1];
@@ -412,8 +412,8 @@ int find_max_depth(int size){
 octree * read_input(FILE * fp){
     octree * octree;
     octree = malloc(sizeof(*octree));
-    size_t len = 0; char* line = malloc(sizeof(char)*24); int size=0;int coordinates[3]={0,0,0};
-    memset(line,0,24 * sizeof(char));
+    size_t len = 0; char* line /*= malloc(sizeof(char)*24)*/; int size=0;int coordinates[3]={0,0,0};
+    //memset(line,0,24 * sizeof(char));
     getline(&line, &len, fp);    
     sscanf(line,"%d",&size);
     //printf("%d\n",size);
@@ -461,6 +461,7 @@ octree * read_input(FILE * fp){
         memset(line,0,24 * sizeof(char));
     }
     fclose(fp);
+    free(line);
     return octree;
 }
 

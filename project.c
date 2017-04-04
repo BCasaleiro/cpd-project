@@ -24,8 +24,6 @@ int main(int argc, char* argv[]){
 
     octree  * octree = read_input(input);
     printf("max depth: %d\n",octree->max_depth);
-    coord ** locations = malloc(sizeof(coord*));
-    *locations=NULL;
     char aux_location[octree->max_depth];
     aux_location[0]=octree->root->location;
     int i = 0;
@@ -45,11 +43,18 @@ int main(int argc, char* argv[]){
     while(index1<octree->leaf_population){
      //   printf("badjoras\n");
         fprintf(output,"%d %d %d\n", leaf_nodes_coords[index1].coords[0],leaf_nodes_coords[index1].coords[1],leaf_nodes_coords[index1].coords[2]);
+        
         index1++;
  
     }
+
+        free((leaf_nodes_coords));
     fclose(output);
     free_octree(octree, octree->root);    
+    free(octree->root->children);
+    free(octree->root->leaf_children);
+    free(octree->root);
+    free(octree);
 }
 
 
