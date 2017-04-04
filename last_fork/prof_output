@@ -1,0 +1,229 @@
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls  ms/call  ms/call  name    
+ 35.81     27.28    27.28     2000    13.64    14.60  update_octree
+ 25.66     46.84    19.55 105464874     0.00     0.00  mk_neighbor
+ 16.74     59.59    12.76     2000     6.38    23.38  mk_neighborhood
+ 13.00     69.50     9.91 951883866     0.00     0.00  find_octant
+  3.53     72.19     2.69 17586083     0.00     0.00  coordinates_from_location
+  2.48     74.08     1.89 17577479     0.00     0.00  get_neighbor_coords
+  1.96     75.57     1.49 37163601     0.00     0.00  delete_inner_node
+  0.55     75.99     0.42 87499212     0.00     0.00  delete_leaf_node
+  0.24     76.17     0.18   300000     0.00     0.00  insert_in_octree
+  0.08     76.23     0.06        1    60.05    60.35  free_octree
+  0.01     76.24     0.01        1    10.01   218.27  read_input
+  0.00     76.24     0.00        1     0.00     0.00  find_max_depth
+  0.00     76.24     0.00        1     0.00     1.32  get_leaf_nodes_locations
+
+ %         the percentage of the total running time of the
+time       program used by this function.
+
+cumulative a running sum of the number of seconds accounted
+ seconds   for by this function and those listed above it.
+
+ self      the number of seconds accounted for by this
+seconds    function alone.  This is the major sort for this
+           listing.
+
+calls      the number of times this function was invoked, if
+           this function is profiled, else blank.
+ 
+ self      the average number of milliseconds spent in this
+ms/call    function per call, if this function is profiled,
+	   else blank.
+
+ total     the average number of milliseconds spent in this
+ms/call    function and its descendents per call, if this 
+	   function is profiled, else blank.
+
+name       the name of the function.  This is the minor sort
+           for this listing. The index shows the location of
+	   the function in the gprof listing. If the index is
+	   in parenthesis it shows where it would appear in
+	   the gprof listing if it were to be printed.
+
+Copyright (C) 2012-2014 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+		     Call graph (explanation follows)
+
+
+granularity: each sample hit covers 2 byte(s) for 0.01% of 76.24 seconds
+
+index % time    self  children    called     name
+                                                 <spontaneous>
+[1]    100.0    0.00   76.24                 main [1]
+               12.76   34.01    2000/2000        mk_neighborhood [2]
+               27.28    1.91    2000/2000        update_octree [4]
+                0.01    0.21       1/1           read_input [10]
+                0.06    0.00       1/1           free_octree [12]
+                0.00    0.00       1/1           get_leaf_nodes_locations [13]
+-----------------------------------------------
+                             86842383             mk_neighborhood [2]
+               12.76   34.01    2000/2000        main [1]
+[2]     61.3   12.76   34.01    2000+86842383 mk_neighborhood [2]
+               19.55    9.88 105464874/105464874     mk_neighbor [3]
+                2.69    0.00 17577479/17586083     coordinates_from_location [6]
+                1.89    0.00 17577479/17577479     get_neighbor_coords [8]
+                             86842383             mk_neighborhood [2]
+-----------------------------------------------
+                             843718992             mk_neighbor [3]
+               19.55    9.88 105464874/105464874     mk_neighborhood [2]
+[3]     38.6   19.55    9.88 105464874+843718992 mk_neighbor [3]
+                9.88    0.00 949183866/951883866     find_octant [5]
+                             843718992             mk_neighbor [3]
+-----------------------------------------------
+                             116926787             update_octree [4]
+               27.28    1.91    2000/2000        main [1]
+[4]     38.3   27.28    1.91    2000+116926787 update_octree [4]
+                0.42    1.49 87499212/87499212     delete_leaf_node [7]
+                             116926787             update_octree [4]
+-----------------------------------------------
+                0.03    0.00 2700000/951883866     insert_in_octree [11]
+                9.88    0.00 949183866/951883866     mk_neighbor [3]
+[5]     13.0    9.91    0.00 951883866         find_octant [5]
+-----------------------------------------------
+                0.00    0.00    8604/17586083     get_leaf_nodes_locations [13]
+                2.69    0.00 17577479/17586083     mk_neighborhood [2]
+[6]      3.5    2.69    0.00 17586083         coordinates_from_location [6]
+-----------------------------------------------
+                0.42    1.49 87499212/87499212     update_octree [4]
+[7]      2.5    0.42    1.49 87499212         delete_leaf_node [7]
+                1.49    0.00 37156120/37163601     delete_inner_node [9]
+-----------------------------------------------
+                1.89    0.00 17577479/17577479     mk_neighborhood [2]
+[8]      2.5    1.89    0.00 17577479         get_neighbor_coords [8]
+-----------------------------------------------
+                             26876071             delete_inner_node [9]
+                0.00    0.00    7481/37163601     free_octree [12]
+                1.49    0.00 37156120/37163601     delete_leaf_node [7]
+[9]      2.0    1.49    0.00 37163601+26876071 delete_inner_node [9]
+                             26876071             delete_inner_node [9]
+-----------------------------------------------
+                0.01    0.21       1/1           main [1]
+[10]     0.3    0.01    0.21       1         read_input [10]
+                0.18    0.03  300000/300000      insert_in_octree [11]
+                0.00    0.00       1/1           find_max_depth [14]
+-----------------------------------------------
+                             2400000             insert_in_octree [11]
+                0.18    0.03  300000/300000      read_input [10]
+[11]     0.3    0.18    0.03  300000+2400000 insert_in_octree [11]
+                0.03    0.00 2700000/951883866     find_octant [5]
+                             2400000             insert_in_octree [11]
+-----------------------------------------------
+                               26430             free_octree [12]
+                0.06    0.00       1/1           main [1]
+[12]     0.1    0.06    0.00       1+26430   free_octree [12]
+                0.00    0.00    7481/37163601     delete_inner_node [9]
+                               26430             free_octree [12]
+-----------------------------------------------
+                               26430             get_leaf_nodes_locations [13]
+                0.00    0.00       1/1           main [1]
+[13]     0.0    0.00    0.00       1+26430   get_leaf_nodes_locations [13]
+                0.00    0.00    8604/17586083     coordinates_from_location [6]
+                               26430             get_leaf_nodes_locations [13]
+-----------------------------------------------
+                0.00    0.00       1/1           read_input [10]
+[14]     0.0    0.00    0.00       1         find_max_depth [14]
+-----------------------------------------------
+
+ This table describes the call tree of the program, and was sorted by
+ the total amount of time spent in each function and its children.
+
+ Each entry in this table consists of several lines.  The line with the
+ index number at the left hand margin lists the current function.
+ The lines above it list the functions that called this function,
+ and the lines below it list the functions this one called.
+ This line lists:
+     index	A unique number given to each element of the table.
+		Index numbers are sorted numerically.
+		The index number is printed next to every function name so
+		it is easier to look up where the function is in the table.
+
+     % time	This is the percentage of the `total' time that was spent
+		in this function and its children.  Note that due to
+		different viewpoints, functions excluded by options, etc,
+		these numbers will NOT add up to 100%.
+
+     self	This is the total amount of time spent in this function.
+
+     children	This is the total amount of time propagated into this
+		function by its children.
+
+     called	This is the number of times the function was called.
+		If the function called itself recursively, the number
+		only includes non-recursive calls, and is followed by
+		a `+' and the number of recursive calls.
+
+     name	The name of the current function.  The index number is
+		printed after it.  If the function is a member of a
+		cycle, the cycle number is printed between the
+		function's name and the index number.
+
+
+ For the function's parents, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the function into this parent.
+
+     children	This is the amount of time that was propagated from
+		the function's children into this parent.
+
+     called	This is the number of times this parent called the
+		function `/' the total number of times the function
+		was called.  Recursive calls to the function are not
+		included in the number after the `/'.
+
+     name	This is the name of the parent.  The parent's index
+		number is printed after it.  If the parent is a
+		member of a cycle, the cycle number is printed between
+		the name and the index number.
+
+ If the parents of the function cannot be determined, the word
+ `<spontaneous>' is printed in the `name' field, and all the other
+ fields are blank.
+
+ For the function's children, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the child into the function.
+
+     children	This is the amount of time that was propagated from the
+		child's children to the function.
+
+     called	This is the number of times the function called
+		this child `/' the total number of times the child
+		was called.  Recursive calls by the child are not
+		listed in the number after the `/'.
+
+     name	This is the name of the child.  The child's index
+		number is printed after it.  If the child is a
+		member of a cycle, the cycle number is printed
+		between the name and the index number.
+
+ If there are any cycles (circles) in the call graph, there is an
+ entry for the cycle-as-a-whole.  This entry shows who called the
+ cycle (as parents) and the members of the cycle (as children.)
+ The `+' recursive calls entry shows the number of function calls that
+ were internal to the cycle, and the calls entry for each member shows,
+ for that member, how many times it was called from other members of
+ the cycle.
+
+Copyright (C) 2012-2014 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+Index by function name
+
+   [6] coordinates_from_location [12] free_octree          [2] mk_neighborhood
+   [9] delete_inner_node      [13] get_leaf_nodes_locations [10] read_input
+   [7] delete_leaf_node        [8] get_neighbor_coords     [4] update_octree
+  [14] find_max_depth         [11] insert_in_octree
+   [5] find_octant             [3] mk_neighbor
