@@ -33,7 +33,7 @@ int main(int argc, char* argv[]){
         mk_neighborhood(octree, octree->root,aux_location);
         update_octree(octree, octree->root);
         i++;
-    //    printf("%d\n",i);
+        printf("%d\n",i);
     }
 
     //printf("into get_leaf_nodes_locations\n");
