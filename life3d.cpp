@@ -29,9 +29,9 @@ short* hash_to_coords(string hash, int size) {
         i++;
     }
 
-    coords[0] = (short)ceil(x);
-    coords[1] = (short)ceil(y);
-    coords[2] = (short)ceil(z);
+    coords[0] = ceil(x);
+    coords[1] = ceil(y);
+    coords[2] = ceil(z);
 
     return coords;
 }
@@ -185,7 +185,7 @@ void bring_from_the_dead(map<string,uint8_t>* cells, vector<string>* zombies) {
             counter++;
         } else {
             if (counter == 2 || counter == 3) {
-                    (*cells)[*it] = 0;
+                (*cells)[*it] = 0;
             } else {
                 counter = 0;
                 aux = *it;
@@ -201,7 +201,7 @@ bool cmp (short* a, short* b) {
         if ( a[1] < b[1] ) {
             return true;
         } else if ( a[1] == b[1] ) {
-            if ( a[2] == b[2] ) {
+            if ( a[2] < b[2] ) {
                 return true;
             } else {
                 return false;
@@ -231,15 +231,19 @@ void print_live_cells(map<string,uint8_t>* cells, int size) {
 void start_game(map<string,uint8_t>* cells, int n, int size) {
     vector<string> zombies;
     int i;
+    short* coords;
 
     for (i = 0; i < n; i++) {
         for (map<string,uint8_t>::iterator it=(*cells).begin(); it!=(*cells).end(); ++it) {
             process_neighbors(cells, &zombies, it->first, size);
+            coords = hash_to_coords(it->first, size);
         }
 
-        sort(zombies.begin(), zombies.end());
-        if (zombies.size() > 0) bring_from_the_dead(cells, &zombies);
-        zombies.erase (zombies.begin(),zombies.end());
+        if (zombies.size() > 0) {
+            sort(zombies.begin(), zombies.end());
+            bring_from_the_dead(cells, &zombies);
+            zombies.erase (zombies.begin(),zombies.end());
+        }
 
         for (map<string,uint8_t>::iterator it=(*cells).begin(); it!=(*cells).end(); ++it) {
             if (it->second < 2 || it->second > 4) {
