@@ -5,7 +5,7 @@
 
 int main(int argc, char const *argv[]) {
     FILE* fw = fopen("test.txt", "w");
-    FILE* fr = fopen("badjoras.in", "r");
+    FILE* fr = fopen("omp/badjoras.in", "r");
     int x, y, z;
 
     fprintf(fw, "%d\n", SIZE);
