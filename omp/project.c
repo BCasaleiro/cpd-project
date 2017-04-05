@@ -7,6 +7,9 @@
 coord * leaf_nodes_coords = NULL;
 int index1 =0;
 
+int one_half[4]={0,3,6,5};
+int other_half[4]={1,2,4,7};
+
 int main(int argc, char* argv[]){
 
     if(argc<3){
@@ -30,9 +33,19 @@ int main(int argc, char* argv[]){
     int j = 0;
     while(i<seasons){
 
-        for(j=0;j<8;j++){
-            if(octree->root->children[j]!=NULL){
-                octree_node * aux = octree->root->children[j];
+        for(j=0;j<4;j++){
+            if(octree->root->children[one_half[j]]!=NULL){
+                octree_node * aux = octree->root->children[one_half[j]];
+                aux_location[1]=aux->location;
+                mk_neighborhood(octree, aux,aux_location);
+                    
+            }
+        
+        }
+
+        for(j=0;j<4;j++){
+            if(octree->root->children[other_half[j]]!=NULL){
+                octree_node * aux = octree->root->children[other_half[j]];
                 aux_location[1]=aux->location;
                 mk_neighborhood(octree, aux,aux_location);
                     
@@ -41,9 +54,16 @@ int main(int argc, char* argv[]){
         }
        //mk_neighborhood(octree, octree->root,aux_location);
         //update_octree(octree, octree->root);
-        for(j=0;j<8;j++){
-            if(octree->root->children[j]!=NULL){
-                octree_node * aux = octree->root->children[j];
+        for(j=0;j<4;j++){
+            if(octree->root->children[one_half[j]]!=NULL){
+                octree_node * aux = octree->root->children[one_half[j]];
+                update_octree(octree, aux);
+            }
+        
+        }
+        for(j=0;j<4;j++){
+            if(octree->root->children[other_half[j]]!=NULL){
+                octree_node * aux = octree->root->children[other_half[j]];
                 update_octree(octree, aux);
             }
         
@@ -58,7 +78,9 @@ int main(int argc, char* argv[]){
     get_leaf_nodes_locations(octree, octree->root ,aux_location);
     qsort(leaf_nodes_coords,octree->leaf_population, sizeof(coord), larger_coordinate);
     index1=0;
+
     FILE * output = fopen("output","w");
+
     while(index1<octree->leaf_population){
         fprintf(output,"%d %d %d\n", leaf_nodes_coords[index1].coords[0],leaf_nodes_coords[index1].coords[1],leaf_nodes_coords[index1].coords[2]);
         
@@ -66,7 +88,7 @@ int main(int argc, char* argv[]){
  
     }
 
-        free((leaf_nodes_coords));
+    free((leaf_nodes_coords));
     fclose(output);
     free_octree(octree, octree->root);    
     free(octree->root->children);
