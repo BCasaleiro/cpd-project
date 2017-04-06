@@ -40,18 +40,18 @@ int main(int argc, char* argv[]){
 
     while(i<seasons){
         for(j=0;j<8;j++){   //    j indexes root's grand_children
-printf("\n");
+//printf("\n");
 
 # pragma omp parallel for private(k),firstprivate(j),shared(octree)
 
             for(k=0;k<8;k++){   // k indexes root's children    
                 char aux_location[octree->max_depth];
                 octree_node * aux=NULL; 
-                printf("aux=%x\t",&aux);
+               // printf("aux=%x\t",&aux);
                 aux_location[0]=octree->root->location;
                 if((octree->root->children[k]!=NULL) && (octree->root->children[k]->children[j]!=NULL)){
                     aux = octree->root->children[k]->children[j];
-                    printf("root->%d->%d\n",k,j);
+                 //   printf("root->%d->%d\n",k,j);
                     aux_location[1]= k;
                     aux_location[2]= j;
                     mk_neighborhood(octree, aux, aux_location);
@@ -61,7 +61,7 @@ printf("\n");
         //mk_neighborhood(octree, octree->root,aux_location);
         update_octree(octree, octree->root);
         i++;
-        printf("%d    leafs: %d\n",i,octree->leaf_population );
+        //printf("%d    leafs: %d\n",i,octree->leaf_population );
 
 //        print_octree(octree,octree->root);
     }

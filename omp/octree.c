@@ -222,8 +222,11 @@ int mk_neighbor(octree* o,octree_node * o_n,int *coordinates,int *n_coordinates)
             o_n->leaf_children[location]->lives = 0;
             
             o_n->live_children++;
+
             omp_set_lock(&lck_octree);
+            
             o->leaf_population++;
+            
             omp_unset_lock(&lck_octree);
             return 0;
 
@@ -246,6 +249,7 @@ int mk_neighbor(octree* o,octree_node * o_n,int *coordinates,int *n_coordinates)
             
             omp_set_lock(&lck_a);
             o_n->children[location]->children = malloc(8*sizeof(*o_n->children[location]->children));
+            omp_unset_lock(&lck_a);
             o_n->children[location]->children[0]=NULL;
             o_n->children[location]->children[1]=NULL;
             o_n->children[location]->children[2]=NULL;
@@ -254,10 +258,10 @@ int mk_neighbor(octree* o,octree_node * o_n,int *coordinates,int *n_coordinates)
             o_n->children[location]->children[5]=NULL;
             o_n->children[location]->children[6]=NULL;
             o_n->children[location]->children[7]=NULL;
-            omp_unset_lock(&lck_a);
          
             omp_set_lock(&lck_a);
             o_n->children[location]->leaf_children = malloc(8*sizeof(*o_n->children[location]->leaf_children));
+            omp_unset_lock(&lck_a);
             o_n->children[location]->leaf_children[0]=NULL;
             o_n->children[location]->leaf_children[1]=NULL;
             o_n->children[location]->leaf_children[2]=NULL;
@@ -266,7 +270,6 @@ int mk_neighbor(octree* o,octree_node * o_n,int *coordinates,int *n_coordinates)
             o_n->children[location]->leaf_children[5]=NULL;
             o_n->children[location]->leaf_children[6]=NULL;
             o_n->children[location]->leaf_children[7]=NULL;
-            omp_unset_lock(&lck_a);
             
             o_n->children[location]->location = location;
             o_n->children[location]->parent = o_n;
@@ -302,10 +305,12 @@ void mk_neighborhood(octree * o, octree_node*o_n, char * aux_location){
     //aux_location[aux->depth-1]=aux->location;
     if(o_n->depth == max_depth-1){
         
-            omp_set_lock(&lck_a);
+        omp_set_lock(&lck_a);
         int **neighbors = malloc(sizeof(int*)*6);
+        omp_unset_lock(&lck_a);
         int i =0;
         int j = 0;
+        omp_set_lock(&lck_a);
         for(i=0;i<6;i++){
             neighbors[i]=malloc(sizeof(int)*3);
         }
