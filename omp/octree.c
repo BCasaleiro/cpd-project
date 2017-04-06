@@ -287,9 +287,12 @@ int mk_neighbor(octree* o,octree_node * o_n,int *coordinates,int *n_coordinates)
 }
 void mk_neighborhood(octree * o, octree_node*o_n, char * aux_location){
     int max_depth = o->max_depth;
+
     octree_node* aux = o_n;
-    aux_location[aux->depth-1]=aux->location;
+    aux_location[o_n->depth-1]=o_n->location;
     
+    //octree_node* aux = o_n;
+    //aux_location[aux->depth-1]=aux->location;
     if(o_n->depth == max_depth-1){
         
             omp_set_lock(&lck_a);
