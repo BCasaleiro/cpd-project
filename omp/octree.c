@@ -6,6 +6,7 @@
 #include <omp.h>
 
 extern omp_lock_t lck_a;
+extern omp_lock_t lck_octree;
 
 void print_octree(octree * o,octree_node * o_n){
     int max_depth = o->max_depth;
@@ -219,8 +220,11 @@ int mk_neighbor(octree* o,octree_node * o_n,int *coordinates,int *n_coordinates)
             o_n->leaf_children[location]->location = location;
             o_n->leaf_children[location]->n = 1;
             o_n->leaf_children[location]->lives = 0;
+            
             o_n->live_children++;
+            omp_set_lock(&lck_octree);
             o->leaf_population++;
+            omp_unset_lock(&lck_octree);
             return 0;
 
         }else{
@@ -239,6 +243,7 @@ int mk_neighbor(octree* o,octree_node * o_n,int *coordinates,int *n_coordinates)
             omp_unset_lock(&lck_a);
             o_n->children[location]->depth = o_n->depth+1;
             o_n->children[location]->live_children = 0;
+            
             omp_set_lock(&lck_a);
             o_n->children[location]->children = malloc(8*sizeof(*o_n->children[location]->children));
             o_n->children[location]->children[0]=NULL;
@@ -250,6 +255,7 @@ int mk_neighbor(octree* o,octree_node * o_n,int *coordinates,int *n_coordinates)
             o_n->children[location]->children[6]=NULL;
             o_n->children[location]->children[7]=NULL;
             omp_unset_lock(&lck_a);
+         
             omp_set_lock(&lck_a);
             o_n->children[location]->leaf_children = malloc(8*sizeof(*o_n->children[location]->leaf_children));
             o_n->children[location]->leaf_children[0]=NULL;
@@ -261,6 +267,7 @@ int mk_neighbor(octree* o,octree_node * o_n,int *coordinates,int *n_coordinates)
             o_n->children[location]->leaf_children[6]=NULL;
             o_n->children[location]->leaf_children[7]=NULL;
             omp_unset_lock(&lck_a);
+            
             o_n->children[location]->location = location;
             o_n->children[location]->parent = o_n;
             o_n->live_children = o_n->live_children +1;
