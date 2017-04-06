@@ -40,10 +40,10 @@ int main(int argc, char* argv[]){
 
     while(i<seasons){
         for(j=0;j<8;j++){   //    j indexes root's grand_children
+printf("\n");
 
-# pragma omp parallel for private(k,aux),firstprivate(j),shared(octree)
+# pragma omp parallel for private(k),firstprivate(j),shared(octree)
 
-            printf("\n");
             for(k=0;k<8;k++){   // k indexes root's children    
                 char aux_location[octree->max_depth];
                 octree_node * aux=NULL; 
