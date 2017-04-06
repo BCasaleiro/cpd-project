@@ -5,6 +5,8 @@
 #include "octree.h"
 #include <omp.h>
 
+extern omp_lock_t lck_a;
+
 void print_octree(octree * o,octree_node * o_n){
     int max_depth = o->max_depth;
     if(o_n->depth == max_depth-1){
@@ -174,13 +176,13 @@ void update_octree(octree*o, octree_node * o_n){
 }
 
 
-void get_neighbor_coords(int *coordinates, int ** neighbors, int size){
+void get_neighbor_coords(ccc coordinates, int ** neighbors, int size){
     int i = 0;
     for(i=0;i<6;i++){
         int j;
-        for(j =0; j<3; j++){
-            neighbors[i][j]=coordinates[j];
-        }
+            neighbors[i][0]=coordinates.x;
+            neighbors[i][1]=coordinates.y;
+            neighbors[i][2]=coordinates.z;
     }
     neighbors[0][0]=(neighbors[0][0]+1)%size;
     neighbors[1][0]--;
@@ -211,14 +213,18 @@ int mk_neighbor(octree* o,octree_node * o_n,int *coordinates,int *n_coordinates)
 
     if(depth == max_depth-1){  //next node is a leaf_node
         if(o_n->leaf_children[location]==NULL){
+            omp_set_lock(&lck_a);
             o_n->leaf_children[location]=malloc(sizeof(*o_n->leaf_children[location]));
+            omp_unset_lock(&lck_a);
             o_n->leaf_children[location]->location = location;
             o_n->leaf_children[location]->n = 1;
             o_n->leaf_children[location]->lives = 0;
             o_n->live_children++;
             o->leaf_population++;
             return 0;
+
         }else{
+
             if(o_n->leaf_children[location]->lives == 0){
                 o_n->leaf_children[location]->n++;
                 return 0;
@@ -228,9 +234,12 @@ int mk_neighbor(octree* o,octree_node * o_n,int *coordinates,int *n_coordinates)
         }
     }else{                      //next node is an inner node of the octree
         if(o_n->children[location]== NULL){
+            omp_set_lock(&lck_a);
             o_n->children[location] = malloc(sizeof(*o_n->children[location]));
+            omp_unset_lock(&lck_a);
             o_n->children[location]->depth = o_n->depth+1;
             o_n->children[location]->live_children = 0;
+            omp_set_lock(&lck_a);
             o_n->children[location]->children = malloc(8*sizeof(*o_n->children[location]->children));
             o_n->children[location]->children[0]=NULL;
             o_n->children[location]->children[1]=NULL;
@@ -240,6 +249,8 @@ int mk_neighbor(octree* o,octree_node * o_n,int *coordinates,int *n_coordinates)
             o_n->children[location]->children[5]=NULL;
             o_n->children[location]->children[6]=NULL;
             o_n->children[location]->children[7]=NULL;
+            omp_unset_lock(&lck_a);
+            omp_set_lock(&lck_a);
             o_n->children[location]->leaf_children = malloc(8*sizeof(*o_n->children[location]->leaf_children));
             o_n->children[location]->leaf_children[0]=NULL;
             o_n->children[location]->leaf_children[1]=NULL;
@@ -249,6 +260,7 @@ int mk_neighbor(octree* o,octree_node * o_n,int *coordinates,int *n_coordinates)
             o_n->children[location]->leaf_children[5]=NULL;
             o_n->children[location]->leaf_children[6]=NULL;
             o_n->children[location]->leaf_children[7]=NULL;
+            omp_unset_lock(&lck_a);
             o_n->children[location]->location = location;
             o_n->children[location]->parent = o_n;
             o_n->live_children = o_n->live_children +1;
@@ -279,22 +291,23 @@ void mk_neighborhood(octree * o, octree_node*o_n, char * aux_location){
     aux_location[aux->depth-1]=aux->location;
     
     if(o_n->depth == max_depth-1){
-
+        
+            omp_set_lock(&lck_a);
         int **neighbors = malloc(sizeof(int*)*6);
         int i =0;
         int j = 0;
         for(i=0;i<6;i++){
             neighbors[i]=malloc(sizeof(int)*3);
         }
+        omp_unset_lock(&lck_a);
         for(i=0;i<8;i++){
             if((o_n->leaf_children[i]!=NULL)&&(o_n->leaf_children[i]->lives == 1)){
                 aux_location[o_n->depth]=o_n->leaf_children[i]->location;
-                int * coordinates = coordinates_from_location(aux_location, max_depth);
-            //    printf("\n%d %d %d neighborhood:\n",coordinates[0],coordinates[1],coordinates[2]);
-                get_neighbor_coords(coordinates, neighbors, o->size);
-                /*for(j=0;j<6;j++){
-                    printf("%d:\t%d %d %d\n",j, neighbors[j][0],neighbors[j][1],neighbors[j][2]);
-                }*/
+                ccc cord;
+                coordinates_from_location(aux_location, max_depth,&cord);
+                omp_set_lock(&lck_a);
+                get_neighbor_coords(cord, neighbors, o->size);
+                omp_unset_lock(&lck_a);
                 int neighbor_count=0;
                 int ii;
                 for( ii=0;ii<6;ii++){
@@ -306,10 +319,12 @@ void mk_neighborhood(octree * o, octree_node*o_n, char * aux_location){
                 o_n->leaf_children[i]->n = neighbor_count;
             }
         }    
+        omp_set_lock(&lck_a);
         for(i=0;i<6;i++){
             free(neighbors[i]);
         }
         free(neighbors);
+        omp_unset_lock(&lck_a);
     }
     else{
         if(o_n->children[0]!=NULL){
@@ -347,27 +362,25 @@ void mk_neighborhood(octree * o, octree_node*o_n, char * aux_location){
 
 
 
-int * coordinates_from_location(char * location,int max_depth){
-        static int coordinates[3];
+void coordinates_from_location(char * location,int max_depth,ccc * coordinates){
         int j;
-        coordinates[0]=0;
-        coordinates[1]=0;
-        coordinates[2]=0;
+        coordinates->x=0;
+        coordinates->y=0;
+        coordinates->z=0;
         int size=0;
         for(j=0;j<max_depth;j++){
             size = 1<<((max_depth-1)-j);
             
             if((location[j] & 0x1) == 1){
-                coordinates[2]=coordinates[2]+((1<<(max_depth-1-j)));
+                coordinates->z=coordinates->z+((1<<(max_depth-1-j)));
             }
             if((location[j] & 0x2 )== 2){
-                coordinates[1]=coordinates[1]+((1<<(max_depth-1-j)));
+                coordinates->y=coordinates->y+((1<<(max_depth-1-j)));
             }
             if((location[j] & 0x4) == 4){
-                coordinates[0]=coordinates[0]+((1<<(max_depth-1-j)));
+                coordinates->x=coordinates->x+((1<<(max_depth-1-j)));
             }
         }
-        return coordinates;
 
 
 }
@@ -398,12 +411,13 @@ coord* get_leaf_nodes_locations(octree * o, octree_node*o_n, char * aux_location
         for(i=0;i<8;i++){
             if((o_n->leaf_children[i]!=NULL)){//&&(o_n->leaf_children[i]->lives == 1)){
                 aux_location[o_n->depth]=o_n->leaf_children[i]->location;
-                int * coordinates = coordinates_from_location(aux_location, max_depth);
+                ccc coord;
+                coordinates_from_location(aux_location, max_depth,&coord);
                 //coord * new_coord = malloc(sizeof(*new_coord));
                 
-                leaf_nodes_coords[index1].coords[0]=coordinates[0];
-                leaf_nodes_coords[index1].coords[1]=coordinates[1];
-                leaf_nodes_coords[index1].coords[2]=coordinates[2];
+                leaf_nodes_coords[index1].coords[0]=coord.x;
+                leaf_nodes_coords[index1].coords[1]=coord.y;
+                leaf_nodes_coords[index1].coords[2]=coord.z;
                 index1++;
               //  printf("%d %d %d \t lives: %d \t neighbors:%d\t\n",coordinates[0],coordinates[1],coordinates[2],o_n->leaf_children[i]->lives, o_n->leaf_children[i]->n);
             }

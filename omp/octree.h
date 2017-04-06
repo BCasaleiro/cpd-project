@@ -12,7 +12,11 @@
 typedef struct coord{
     short coords[3];
 }coord;
-
+typedef struct ccc{
+    short x;
+    short y;
+    short z;
+}ccc;
 coord*leaf_nodes_coords;
 int index1;
 typedef struct octree_node{
@@ -45,7 +49,7 @@ void print_children(octree_node * o_n, int max_depth);
 void insert_in_octree(octree * o, octree_node * o_n, int coordinates[3], int n_coordinates[3]);
 int larger_coordinate(const void * c, const void *d);
 void print_locations(octree * o, coord* locations);
-int * coordinates_from_location(char * location, int max_depth);
+void coordinates_from_location(char * location, int max_depth, ccc* coordinates);
 coord *  get_leaf_nodes_locations(octree * o, octree_node*o_n, char * aux_location);
 void free_octree(octree*o, octree_node* o_n);
 void update_octree(octree*o,octree_node *o_n);

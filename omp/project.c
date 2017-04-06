@@ -8,6 +8,7 @@
 
 coord * leaf_nodes_coords = NULL;
 int index1 =0;
+omp_lock_t lck_a;
 
 int one_half[4]={0,3,6,5};
 int other_half[4]={1,2,4,7};
@@ -29,22 +30,23 @@ int main(int argc, char* argv[]){
 
     octree  * octree = read_input(input);
     printf("max depth: %d\n",octree->max_depth);
-    char aux_location[octree->max_depth];
-    aux_location[0]=octree->root->location;
     
     int i = 0;
     int j = 0;
     int k = 0;
-
+    omp_init_lock(&lck_a);
     while(i<seasons){
         for(j=0;j<8;j++){   //    j indexes root's grand_children
 
-# pragma omp parallel for private(k),firstprivate(octree,aux_location,j)
-
+            octree_node * aux; 
+# pragma omp parallel for private(k,aux),firstprivate(j)
             for(k=0;k<8;k++){   // k indexes root's children    
+                char aux_location[octree->max_depth];
+                aux_location[0]=octree->root->location;
                 if((octree->root->children[k]!=NULL) && (octree->root->children[k]->children[j]!=NULL)){
             
-                    octree_node * aux = octree->root->children[k]->children[j];
+                    aux = octree->root->children[k]->children[j];
+        //        printf("root->%d->%d\n",k,j);
                     aux_location[1]= k;
                     aux_location[2]= j;
                     mk_neighborhood(octree, aux, aux_location);
@@ -59,6 +61,8 @@ int main(int argc, char* argv[]){
 //        print_octree(octree,octree->root);
     }
 
+    char aux_location[octree->max_depth];
+    aux_location[0]=octree->root->location;
     leaf_nodes_coords = malloc(octree->leaf_population*sizeof(coord));
     get_leaf_nodes_locations(octree, octree->root ,aux_location);
     qsort(leaf_nodes_coords,octree->leaf_population, sizeof(coord), larger_coordinate);
@@ -73,8 +77,8 @@ int main(int argc, char* argv[]){
  
     }
 
-    free((leaf_nodes_coords));
     fclose(output);
+    free((leaf_nodes_coords));
     free_octree(octree, octree->root);    
     free(octree->root->children);
     free(octree->root->leaf_children);
