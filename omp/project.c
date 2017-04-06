@@ -9,6 +9,7 @@
 coord * leaf_nodes_coords = NULL;
 int index1 =0;
 omp_lock_t lck_a;
+omp_lock_t lck_octree;
 
 int one_half[4]={0,3,6,5};
 int other_half[4]={1,2,4,7};
@@ -35,18 +36,20 @@ int main(int argc, char* argv[]){
     int j = 0;
     int k = 0;
     omp_init_lock(&lck_a);
+    omp_init_lock(&lck_octree);
+
     while(i<seasons){
         for(j=0;j<8;j++){   //    j indexes root's grand_children
 
             octree_node * aux; 
-# pragma omp parallel for private(k,aux),firstprivate(j)
+# pragma omp parallel for private(k,aux),firstprivate(j),shared(octree)
             for(k=0;k<8;k++){   // k indexes root's children    
                 char aux_location[octree->max_depth];
                 aux_location[0]=octree->root->location;
                 if((octree->root->children[k]!=NULL) && (octree->root->children[k]->children[j]!=NULL)){
             
                     aux = octree->root->children[k]->children[j];
-        //        printf("root->%d->%d\n",k,j);
+                    printf("root->%d->%d\n",k,j);
                     aux_location[1]= k;
                     aux_location[2]= j;
                     mk_neighborhood(octree, aux, aux_location);
@@ -78,7 +81,7 @@ int main(int argc, char* argv[]){
     }
 
     fclose(output);
-    free((leaf_nodes_coords));
+    //free((leaf_nodes_coords));
     free_octree(octree, octree->root);    
     free(octree->root->children);
     free(octree->root->leaf_children);
