@@ -3,6 +3,8 @@
 #include <string.h>
 #include <stdint.h>
 #include "octree.h"
+#include <omp.h>
+
 
 coord * leaf_nodes_coords = NULL;
 int index1 =0;
@@ -29,45 +31,28 @@ int main(int argc, char* argv[]){
     printf("max depth: %d\n",octree->max_depth);
     char aux_location[octree->max_depth];
     aux_location[0]=octree->root->location;
+    
     int i = 0;
     int j = 0;
+    int k = 0;
+
     while(i<seasons){
+        for(j=0;j<8;j++){   //    j indexes root's grand_children
 
-        for(j=0;j<4;j++){
-            if(octree->root->children[one_half[j]]!=NULL){
-                octree_node * aux = octree->root->children[one_half[j]];
-                aux_location[1]=aux->location;
-                mk_neighborhood(octree, aux,aux_location);
-                    
-            }
-        
-        }
+# pragma omp parallel for private(k),firstprivate(octree,aux_location,j)
 
-        for(j=0;j<4;j++){
-            if(octree->root->children[other_half[j]]!=NULL){
-                octree_node * aux = octree->root->children[other_half[j]];
-                aux_location[1]=aux->location;
-                mk_neighborhood(octree, aux,aux_location);
-                    
+            for(k=0;k<8;k++){   // k indexes root's children    
+                if((octree->root->children[k]!=NULL) && (octree->root->children[k]->children[j]!=NULL)){
+            
+                    octree_node * aux = octree->root->children[k]->children[j];
+                    aux_location[1]= k;
+                    aux_location[2]= j;
+                    mk_neighborhood(octree, aux, aux_location);
+                }
             }
-        
         }
-       //mk_neighborhood(octree, octree->root,aux_location);
-        //update_octree(octree, octree->root);
-        for(j=0;j<4;j++){
-            if(octree->root->children[one_half[j]]!=NULL){
-                octree_node * aux = octree->root->children[one_half[j]];
-                update_octree(octree, aux);
-            }
-        
-        }
-        for(j=0;j<4;j++){
-            if(octree->root->children[other_half[j]]!=NULL){
-                octree_node * aux = octree->root->children[other_half[j]];
-                update_octree(octree, aux);
-            }
-        
-        }
+        //mk_neighborhood(octree, octree->root,aux_location);
+        update_octree(octree, octree->root);
         i++;
         printf("%d    leafs: %d\n",i,octree->leaf_population );
 

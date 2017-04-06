@@ -3,6 +3,8 @@
 #include <string.h>
 #include <stdint.h>
 #include "octree.h"
+#include <omp.h>
+
 void print_octree(octree * o,octree_node * o_n){
     int max_depth = o->max_depth;
     if(o_n->depth == max_depth-1){

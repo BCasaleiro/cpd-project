@@ -7,3 +7,9 @@ debug: project.c octree.c
 
 mem-check: project.c octree.c
 	gcc -O0 -g -o project project.c octree.c
+
+omp:project.c octree.c
+	gcc -fopenmp -o project project.c octree.c
+
+omp-mem-check:project.c octree.c
+	gcc -O0 -g -fopenmp -o project project.c octree.c
