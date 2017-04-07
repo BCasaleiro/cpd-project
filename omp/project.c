@@ -91,7 +91,7 @@ double start = omp_get_wtime();
     free(octree);
 
 double end = omp_get_wtime();
-printf("time:%d\n", start-end);
+printf("time:%lf\n", start-end);
     return 1;
 }
 
