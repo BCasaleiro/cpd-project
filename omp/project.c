@@ -15,7 +15,7 @@ int one_half[4]={0,3,6,5};
 int other_half[4]={1,2,4,7};
 
 int main(int argc, char* argv[]){
-
+double start = omp_get_wtime();
     if(argc<3){
         printf("Not enough args: requires 2\n");
         exit(1);
@@ -89,6 +89,9 @@ int main(int argc, char* argv[]){
     free(octree->root->leaf_children);
     free(octree->root);
     free(octree);
+
+double end = omp_get_wtime();
+printf("time:%lf\n", start-end);
     return 1;
 }
 
