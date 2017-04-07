@@ -17,3 +17,5 @@ badjoras.in
 *.fot
 *.cb
 *.cb2
+*.fbc_latexmk
+*.synctex.gz
