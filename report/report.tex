@@ -1,0 +1,170 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Journal Article
+% LaTeX Template
+% Version 1.4 (15/5/16)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% Frits Wenneker (http://www.howtotex.com) with extensive modifications by
+% Vel (vel@LaTeXTemplates.com)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[twoside,twocolumn]{article}
+
+
+\usepackage[utf8x]{inputenc}
+\usepackage{graphicx}
+
+\usepackage{blindtext} % Package to generate dummy text throughout this template
+\usepackage{float}
+
+\usepackage[sc]{mathpazo} % Use the Palatino font
+\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
+\linespread{1.05} % Line spacing - Palatino needs more space between lines
+\usepackage{microtype} % Slightly tweak font spacing for aesthetics
+
+\usepackage[portuguese]{babel} % Language hyphenation and typographical rules
+
+\usepackage[hmarginratio=1:1,top=32mm,columnsep=20pt]{geometry} % Document margins
+\usepackage[hang, small,labelfont=bf,up,textfont=it,up]{caption} % Custom captions under/above floats in tables or figures
+\usepackage{booktabs} % Horizontal rules in tables
+
+\usepackage{lettrine} % The lettrine is the first enlarged letter at the beginning of the text
+
+\usepackage{enumitem} % Customized lists
+\setlist[itemize]{noitemsep} % Make itemize lists more compact
+
+\usepackage{abstract} % Allows abstract customization
+\renewcommand{\abstractnamefont}{\normalfont\bfseries} % Set the "Abstract" text to bold
+\renewcommand{\abstracttextfont}{\normalfont\small\itshape} % Set the abstract itself to small italic text
+
+\usepackage{titlesec} % Allows customization of titles
+\renewcommand\thesection{\Roman{section}} % Roman numerals for the sections
+\renewcommand\thesubsection{\roman{subsection}} % roman numerals for subsections
+\titleformat{\section}[block]{\large\scshape\centering}{\thesection.}{1em}{} % Change the look of the section titles
+\titleformat{\subsection}[block]{\large}{\thesubsection.}{1em}{} % Change the look of the section titles
+
+\usepackage{fancyhdr} % Headers and footers
+\pagestyle{fancy} % All pages have headers and footers
+\fancyhead{} % Blank out the default header
+\fancyfoot{} % Blank out the default footer
+\fancyhead[C]{GAME OF LIFE 3D $\bullet$ Abril 2017 $\bullet$ CPD} % Custom header text
+\fancyfoot[RO,LE]{\thepage} % Custom footer text
+
+\usepackage{titling} % Customizing the title section
+
+\usepackage{hyperref} % For hyperlinks in the PDF
+
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\setlength{\droptitle}{-4\baselineskip} % Move the title up
+
+\pretitle{\begin{center}\Huge\bfseries} % Article title formatting
+\posttitle{\end{center}} % Article title closing formatting
+\title{GAME OF LIFE 3D\\\large{Computação Paralela e Distribuída}\\Instituto Superior Técnico} % Article title
+\author{%
+\textsc{Afonso Costa}%\thanks{A thank you or further information} \\[1ex] % Your name
+\\%[1ex]
+%\normalsize Instituto Superior Técnico \\ % Your institution
+\normalsize 78719 % Your email address
+\and % Uncomment if 2 authors are required, duplicate these 4 lines if more
+\textsc{André Xavier}%\thanks{Corresponding author} \\[1ex] % Second author's name
+\\%[1ex]
+%\normalsize University of Utah \\ % Second author's institution
+\normalsize 72644 % Second author's email address
+\and % Uncomment if 2 authors are required, duplicate these 4 lines if more
+\textsc{Bernardo Casaleiro}%\thanks{Corresponding author} \\[1ex] % Second author's name
+\\%[1ex]
+%\normalsize University of Utah \\ % Second author's institution
+\normalsize 87827 % Second author's email address
+}
+\date{\today} % Leave empty to omit a date
+\renewcommand{\maketitlehookd}{%
+
+}
+
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+% Print the title
+\maketitle
+%----------------------------------------------------------------------------------------
+%	ARTICLE CONTENTS
+%----------------------------------------------------------------------------------------
+
+\section{Série}
+
+A implementação série do \textit{Game of Life} tem como base a estrutura de uma matriz endereçada com as coordenadas x e y do cubo. Esta matriz é então composta por apontadores para árvores binárias balanceadas. Esta solução pareceu a mais adequada pois temos uma procura por um nó específico com complexidade de $O(\log_2 N)$ pois o acesso às coordenadas x e y é direto e à coordenada z é a procura numa árvore binária balanceada que tem profundidade no máximo de $\log_2 N$. \\
+
+O processo de evolução do jogo é ligeiramente mais complexo. Como não é possível atualizar a árvore à medida que se percebe se o nó vai viver ou não então a solução encontrada prende-se com a implementação de uma lista de nós a ser inseridos na iteração seguinte. Percorre-se então as árvores que têm só as células vivas através de uma pesquisa \textit{PreOrder}. É neste momento que se recorreu a um método de pesquisa inteligente. Para cada nó vivo, verifica-se o número de vizinhos vivos e para cada um dos vizinhos utiliza-se o mesmo procedimento. Se os requisitos forem cumpridos então adiciona-se esse nó à lista de inserção. É de notar que um nó que não tenha qualquer vizinho nunca vai viver na próxima iteração logo não há necessidade de o testar reduzindo substancialmente o número de procuras. Uma célula, seja ela viva ou morta, vai viver na iteração seguinte se o número de vizinhos vivos for igual a 2 ou 3. Isto deixa-nos com apenas o caso do número de vizinhos igual a quatro quando a célula está viva logo para cada célula pesquisada na árvore apenas se realiza esta verificação. Na figura \ref{search} ilustra-se este procedimento para um problema a duas dimensões. Em três dimensões este método segue os mesmos princípios.
+
+\begin{figure}[H]
+    \centering
+    \fbox{\includegraphics[width=0.5\textwidth]{cpd.png}}
+    \caption{Descrição do problema de pesquisa de nós}
+    \label{search}
+\end{figure}
+
+No final de cada iteração liberta-se a memória respeitante à árvore da iteração anterior e aloca-se memória para a nova árvore inserindo os nós que se encontram na lista de inserção.
+
+\section{Paralelização com OMP}
+
+Nesta fase pretende-se explorar o paralelismo oferecido pelos processadores das máquinas onde se vai correr o programa. Para se poder paralelizar ao máximo teve de se evitar fazer alocações e libertações de memória. Trabalha-se então sempre na mesma árvore passando a existir uma lista de todos os nós a inserir e uma de todos os nós a eliminar. O próximo passo seria paralelizar o \textit{for} de pesquisa na árvore, no entanto, cada \textit{thread} estaria a tentar inserir ao mesmo tempo na mesma lista. Para solucionar este problema criam-se várias listas de inserção e eliminação. O número de listas corresponde ao número de \textit{threads}. Assim, não só podemos paralelizar o \textit{for}, como dividir o trabalho de inserção e eliminação da árvore, sendo que cada \textit{thread} trata da sua lista. Neste caso surge outro problema, pois pode ocorrer o caso em que a duas \textit{threads} estão a tentar aceder à mesma árvore. Este problema resolveu-se através da introdução de \textit{locks} na inserção e eliminação da árvore.
+
+\section{Testes e Interpretação de Resultados}
+
+Por forma a testar a nossa implementação foram efetuadas repetidas execuções para cada um dos casos de teste fornecidos,
+com diferentes número de \textit{threads}. Foi então considerada para análise de resultados a média dos valores obtidos.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lllll}
+Caso  & 1         & 2         & 4         & 8         \\
+s20e400.in    & 8,11  & 5,63  & 3,85  & 3,07  \\
+s50e5k.in     & 89,16 & 57,87 & 39,23 & 29,80 \\
+s150e10k.in   & 2,02  & 2,28  & 2,07  & 1,78  \\
+s500e300k.in  & 32,50 & 35,51 & 29,22 & 26,17
+\end{tabular}
+\caption{Valores Obtidos}
+\label{search}
+\end{table}
+
+Para os casos de teste com células mais condensadas verifica-se um elevado speedup, derivado da divisão de tarefas pelas diferentes \textit{threads}.
+Como para estes casos os cálculos são reduzidos as \textit{threads} não ficam muito tempo a aguardar que as restantes terminem no \textit{barrier}.
+
+\begin{figure}[H]
+    \centering
+    \fbox{\includegraphics[width=0.4\textwidth]{50k.png}}
+    \caption{Comparação de tempos obtidos para o caso de teste s50e5k.in com diferentes definições de OMP\_NUM\_THREADS}
+    \label{search}
+\end{figure}
+
+Por sua vez para casos com células mais esparsas existe uma perda de performance com baixo número de \textit{threads}, devido ao facto de estas
+aguardarem o término das restantes. Esta perda de performance é também causada pelo facto de sempre que existe alocação de memória existir
+uma lock por forma a prevenir possiveis conflitos.
+
+\begin{figure}[H]
+    \centering
+    \fbox{\includegraphics[width=0.4\textwidth]{300k.png}}
+    \caption{Comparação de tempos obtidos para o caso de teste s500e300k.in com diferentes definições de OMP\_NUM\_THREADS}
+    \label{search}
+\end{figure}
+
+Em geral os resultados corresponderam às nossas expectativas. Para comunidades de células mais densas existe um speedup maior, enquanto que em casos
+mais esparsos o mesmo não se verifica devido a não ter sido implementado load balancing.
+
+%----------------------------------------------------------------------------------------
+
+\end{document}
