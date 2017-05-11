@@ -3,26 +3,27 @@
 #include<string.h>
 #include"tree.h"
 
-int height( Node* n )
-{
+/** Return the height of a node */
+int height( Node* n ) {
     if( n == NULL )
         return 0;
     else
         return n->height;
 }
 
-void initTree(Tree *tree){
+/** Initialize tree */
+void initTree(Tree *tree) {
   tree->root=NULL;
   tree->size=0;
 }
 
-int max( int l, int r)
-{
+/** Max between two integers */
+int max( int l, int r) {
     return (l > r) ? l: r;
 }
 
-Node* newNode(int key)
-{
+/** Create a new node */
+Node* newNode(int key) {
     Node* node = (Node*)malloc(sizeof(Node));
     node->data   = key;
     node->left   = NULL;
@@ -31,8 +32,8 @@ Node* newNode(int key)
     return(node);
 }
 
-Node *rightRotate(Node *y)
-{
+/** A utility function to right rotate subtree rooted with y */
+Node *rightRotate(Node *y) {
     Node *x = y->left;
     Node *T2 = x->right;
 
@@ -48,10 +49,9 @@ Node *rightRotate(Node *y)
     return x;
 }
 
-// A utility function to left rotate subtree rooted with x
-// See the diagram given above.
-Node *leftRotate(Node *x)
-{
+/** A utility function to left rotate subtree rooted with x
+    See the diagram given above. */
+Node *leftRotate(Node *x) {
     Node *y = x->right;
     Node *T2 = y->left;
 
@@ -67,16 +67,14 @@ Node *leftRotate(Node *x)
     return y;
 }
 
-// Get Balance factor of node N
-int getBalance(Node *N)
-{
+/** Get Balance factor of node N */
+int getBalance(Node *N) {
     if (N == NULL)
         return 0;
     return height(N->left) - height(N->right);
 }
 
-Node* insertTree(int key, Node* node)
-{
+Node* insertTree(int key, Node* node) {
     /* 1.  Perform the normal BST rotation */
     if (node == NULL)
         return(newNode(key));
@@ -126,8 +124,7 @@ Node* insertTree(int key, Node* node)
     return node;
 }
 
-void display_avl(Node* t, int x, int y)
-{
+void display_avl(Node* t, int x, int y) {
     if (t == NULL)
         return;
     display_avl(t->left, x, y);
@@ -156,8 +153,7 @@ void printTree(Tree ****hash, int n){
   }
 }
 
-void fdisplay_avl(Node* t, int x, int y, FILE *fp)
-{
+void fdisplay_avl(Node* t, int x, int y, FILE *fp) {
     if (t == NULL)
         return;
     fdisplay_avl(t->left, x, y, fp);
@@ -186,11 +182,8 @@ void fprintTree(Tree ****hash, int n, FILE *fp){
   }
 }
 
-
-
-
-Node *find(int e, Node* t )
-{
+/** Find the node with coordinate z = e in the Tree t */
+Node *find(int e, Node* t ) {
     if( t == NULL )
         return NULL;
     if( e < t->data )
@@ -201,9 +194,7 @@ Node *find(int e, Node* t )
         return t;
 }
 
-
-void dispose(Node* t)
-{
+void dispose(Node* t) {
     if( t != NULL )
     {
         dispose( t->left );
@@ -212,6 +203,7 @@ void dispose(Node* t)
     }
 }
 
+/** Free Tree */
 void freeTree(Tree ****hash, int n){
   int i,j;
   for (i = 0; i < n; i++) {
