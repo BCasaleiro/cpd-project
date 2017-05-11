@@ -71,7 +71,7 @@ int countNeighbours(Tree ****hash, localization x, int n) {
     return i;
 }
 
-/** Check */
+/** Insert all expected alive nodes into the insert Linked-List */
 void preOrder(Node *root, Tree ****hash, int i, int j, Row *insert, int n) {
     localization x;
     int c;
