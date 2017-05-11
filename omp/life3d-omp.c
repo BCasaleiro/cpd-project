@@ -70,6 +70,9 @@ int main(int argc, char *argv[]) {
     /* fprintTree(hash,n, fp); */
     /* fclose(fp); */
 
+    /** Print tree to stdout */
+    printTree(hash, n);
+
     /** Free Linked Lists */
     for (i = 0; i < th; i++) {
         free(insert[i]);
