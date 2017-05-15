@@ -416,12 +416,15 @@ void nextGen(Tree ****hash, Row **insert, Row **delete, int n) {
             preOrder((*hash)[i][j]->root, hash, i, j, insert[tid], delete[tid], n);
         }
     }
+
     for (j = 0; j < n; j++) {
         preOrderi((*hash)[(id*n)/np][j]->root, hash, (id*n)/np, j, insert[tid], delete[tid], n);
     }
+
     for (j = 0; j < n; j++) {
         preOrderf((*hash)[((id+1)*n)/np][j]->root, hash, ((id+1)*n)/np, j, insert[tid], delete[tid], n);
     }
+
     if(pcGetID()==0){
       for (j = 0; j < n; j++) {
           preOrderi1((*hash)[n][j]->root, hash, n, j, insert[tid], delete[tid], n);
@@ -431,6 +434,7 @@ void nextGen(Tree ****hash, Row **insert, Row **delete, int n) {
           preOrderi1((*hash)[(id*n)/np-1][j]->root, hash, (id*n)/np-1, j, insert[tid], delete[tid], n);
       }
     }
+
     if(pcGetID()==np-1){
       for (j = 0; j < n; j++) {
           preOrderf1((*hash)[1][j]->root, hash, 1, j, insert[tid], delete[tid], n);
@@ -459,7 +463,7 @@ void nextGen(Tree ****hash, Row **insert, Row **delete, int n) {
 }
 
 /** Read File */
-int readFile(Tree ****hash, char *file) {
+int readFile(Tree ****hash, char *file, int id, int nprocs) {
     FILE *fp;
     int x, y, z, n;
     int i, j;
@@ -471,8 +475,8 @@ int readFile(Tree ****hash, char *file) {
     fscanf(fp, "%d", &n);
 
     /** For each cell in a 2d dimensional space aloc a pointer of pointer of pointer */
-    (*hash) = (Tree***)malloc(n*n*sizeof(Tree**));
-    for (i = 0; i < n; i++) {
+    (*hash) = (Tree***)malloc( BLOCK_SIZE(id, nprocs, n) * n *sizeof(Tree**));
+    for (i = 0; i < BLOCK_SIZE(id, nprocs, n); i++) {
         /** For each row aloc a pointer of pointer */
         (*hash)[i]=(Tree**)malloc(n*sizeof(Tree*));
         for (j = 0; j < n; j++) {
@@ -484,8 +488,10 @@ int readFile(Tree ****hash, char *file) {
 
     /** Initialize the given cells */
     while (fscanf(fp,"%d %d %d", &x, &y, &z)==3) {
-        (*hash)[x][y]->root=insertTree(z,(*hash)[x][y]->root);
-        (*hash)[x][y]->size=((*hash)[x][y]->size) + 1;
+        if( BLOCK_OWNER( x, nprocs, n ) == id ) {
+          (*hash)[x - BLOCK_LOW(id, nprocs, n)][y]->root=insertTree(z,(*hash)[x][y]->root);
+          (*hash)[x - BLOCK_LOW(id, nprocs, n)][y]->size=((*hash)[x][y]->size) + 1;
+        }
     }
 
     /** Close testcase file */

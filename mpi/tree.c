@@ -130,11 +130,11 @@ Node* insertTree(int key, Node* node) {
     return node;
 }
 
-void display_avl(Node* t, int x, int y) {
+void display_avl(Node* t, int x, int y, int id) {
     if (t == NULL)
     return;
     display_avl(t->left, x, y);
-    printf("%d %d %d\n", x, y, t->data);
+    printf("[%d] %d %d %d\n", id, x, y, t->data);
 
     /*if(t->left != NULL)
     printf("(L:%d)\n",t->left->data);
@@ -146,13 +146,13 @@ void display_avl(Node* t, int x, int y) {
     display_avl(t->right, x, y);
 }
 
-void printTree(Tree ****hash, int n) {
+void printTree(Tree ****hash, int n, int id) {
     int i,j;
     for (i = 0; i < n; i++) {
         for (j = 0; j < n; j++) {
             if ((*hash)[i][j]->size!=0) {
                 //printf("%d %d ", i, j);
-                display_avl((*hash)[i][j]->root, i, j);
+                display_avl((*hash)[i][j]->root, i, j, id);
                 //printf("\n");
             }
         }

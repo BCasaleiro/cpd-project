@@ -24,34 +24,37 @@ int main(int argc, char *argv[]) {
     /** Get number of generations */
     k = strtol(argv[2],NULL,10);
 
-    hash = (Tree****)malloc(sizeof(Tree****));
-
-    /** Read File */
-    n = readFile(hash, name);
-
     MPI_Init(&argc, &argv);
     MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
     MPI_Comm_rank(MPI_COMM_WORLD, &id);
 
-    insert=(Row*)malloc(sizeof(Row));
-    delete=(Row*)malloc(sizeof(Row));
+    hash = (Tree****)malloc(sizeof(Tree****));
 
-    for (i = 0; i < k; i++){
-        /** Compute next generation */
-        nextGen(hash, insert, delete, n);
-    }
+    /** Read File */
+    n = readFile(hash, name, id, nprocs);
+    printTree(hash, n, id);
+
+    //insert=(Row*)malloc(sizeof(Row));
+    //delete=(Row*)malloc(sizeof(Row));
+
+    //for (i = 0; i < k; i++){
+    //    /** Compute next generation */
+    //    nextGen(hash, insert, delete, n);
+    //}
+
+    /** Free Linked Lists */
+    //free(insert[i]);
+    //free(delete[i]);
+
+    /** Free Tree */
+    freeTree(hash, n);
 
     MPI_Finalize();
 
     /** Print tree to stdout */
-    printTree(hash, n);
+    //printTree(hash, n);
 
-    /** Free Linked Lists */
-    free(insert[i]);
-    free(delete[i]);
 
-    /** Free Tree */
-    freeTree(hash, n);
 
     return 0;
 }
