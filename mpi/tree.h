@@ -26,9 +26,9 @@ int getBalance(Node *N);
 
 Node* insertTree(int key, Node* node);
 
-void display_avl(Node* t, int x, int y);
+void display_avl(Node* t, int x, int y, int id);
 
-void printTree(Tree ****hash, int n);
+void printTree(Tree ****hash, int n, int id);
 
 void fdisplay_avl(Node* t, int x, int y, FILE *fp);
 
@@ -39,3 +39,7 @@ Node *find(int e, Node* t );
 void dispose(Node* t);
 
 void freeTree(Tree ****hash, int n);
+
+Node *minValueNode(Node *node);
+
+Node* deleteNode(Node* root, int key);

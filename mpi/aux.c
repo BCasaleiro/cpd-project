@@ -74,7 +74,7 @@ int countNeighbours(Tree ****hash, localization x, int n) {
     and to revive in the insert Linked-List */
 
 
-void preOrderf1(Node *root, Tree ****hash, int i, int j, Row insert, Row delete, int n) {
+void preOrderf1(Node *root, Tree ****hash, int i, int j, Row* insert, Row* delete, int n) {
     localization x;
     int c;
     if(root != NULL) {
@@ -100,7 +100,7 @@ void preOrderf1(Node *root, Tree ****hash, int i, int j, Row insert, Row delete,
     }
 }
 
-void preOrderi1(Node *root, Tree ****hash, int i, int j, Row insert, Row delete, int n) {
+void preOrderi1(Node *root, Tree ****hash, int i, int j, Row* insert, Row* delete, int n) {
     localization x;
     int c;
     if(root != NULL) {
@@ -126,7 +126,7 @@ void preOrderi1(Node *root, Tree ****hash, int i, int j, Row insert, Row delete,
     }
 }
 
-void preOrderi(Node *root, Tree ****hash, int i, int j, Row insert, Row delete, int n) {
+void preOrderi(Node *root, Tree ****hash, int i, int j, Row* insert, Row* delete, int n) {
     localization x;
     int c;
     if(root != NULL) {
@@ -213,7 +213,7 @@ void preOrderi(Node *root, Tree ****hash, int i, int j, Row insert, Row delete, 
     }
 }
 
-void preOrderf(Node *root, Tree ****hash, int i, int j, Row insert, Row delete, int n) {
+void preOrderf(Node *root, Tree ****hash, int i, int j, Row* insert, Row* delete, int n) {
     localization x;
     int c;
     if(root != NULL) {
@@ -300,7 +300,7 @@ void preOrderf(Node *root, Tree ****hash, int i, int j, Row insert, Row delete, 
     }
 }
 
-void preOrder(Node *root, Tree ****hash, int i, int j, Row insert, Row delete, int n) {
+void preOrder(Node *root, Tree ****hash, int i, int j, Row* insert, Row* delete, int n) {
     localization x;
     int c;
     if(root != NULL) {
@@ -401,7 +401,7 @@ void preOrder(Node *root, Tree ****hash, int i, int j, Row insert, Row delete, i
     }
 }
 
-void nextGen(Tree ****hash, Row **insert, Row **delete, int n) {
+void nextGen(Tree ****hash, Row *insert, Row *delete, int n) {
     int i, j;
     List *aux;
 

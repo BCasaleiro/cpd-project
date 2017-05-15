@@ -5,8 +5,8 @@
 
 int countNeighbours(Tree ****hash, localization x, int n);
 
-void preOrder(Node *root, Tree ****hash, int i, int j, Row *insert, int n);
+void preOrder(Node *root, Tree ****hash, int i, int j, Row *insert, Row *delete, int n);
 
-void nextGen(Tree ****hash, Row *insert, int n, Tree ****hash1);
+void nextGen(Tree ****hash, Row *insert, Row *delete, int n);
 
-int readFile(Tree ****hash, char *file);
+int readFile(Tree ****hash, char *file, int id, int nprocs);

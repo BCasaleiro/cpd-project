@@ -9,9 +9,9 @@
 int main(int argc, char *argv[]) {
     Tree ****hash;
     char name[246];
-    int i, k, n;
+    int /*i, k,*/ n;
     int id, nprocs;
-    Row *insert, *delete;
+    //Row *insert, *delete;
 
     if (argc != 3) {
         printf("Usage: life3d-omp <infile> <iterations>.\n");
@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
     strcpy(name, argv[1]);
 
     /** Get number of generations */
-    k = strtol(argv[2],NULL,10);
+    //k = strtol(argv[2],NULL,10);
 
     MPI_Init(&argc, &argv);
     MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
