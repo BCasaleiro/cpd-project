@@ -1,45 +1,57 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
+#include <mpi.h>
 #include"list.h"
 #include"tree.h"
 #include"aux.h"
 
 int main(int argc, char *argv[]) {
+    Tree ****hash;
+    char name[246];
+    int i, k, n;
+    int id, nprocs;
+    Row *insert, *delete;
 
-  if (argc != 3) {
-    printf("Usage: life3d <infile> <iterations>.\n");
-    exit(-1);
-  }
-
-  char name[246];
-  strcpy(name, argv[1]);
-  int k = strtol(argv[2],NULL,10);
-
-  Tree ****hash = (Tree****)malloc(sizeof(Tree****));
-  Tree ****hash1 = (Tree****)malloc(sizeof(Tree****));
-  int i;
-  int n;
-  FILE *fp;
-  fp = fopen("result.out", "w");
-  Row *insert=(Row*)malloc(sizeof(Row));
-  init(insert);
-  n = readFile(hash, name);
-  for (i = 0; i < k; i++){
-    if (i==0) {
-    }else{
-      hash=hash1;
-      hash1 = (Tree****)malloc(sizeof(Tree****));
+    if (argc != 3) {
+        printf("Usage: life3d-omp <infile> <iterations>.\n");
+        exit(-1);
     }
-    init(insert);
-    nextGen(hash, insert, n, hash1);
-    freeList(insert);
+
+    /** Get testcase filename */
+    strcpy(name, argv[1]);
+
+    /** Get number of generations */
+    k = strtol(argv[2],NULL,10);
+
+    hash = (Tree****)malloc(sizeof(Tree****));
+
+    /** Read File */
+    n = readFile(hash, name);
+
+    MPI_Init(&argc, &argv);
+    MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
+    MPI_Comm_rank(MPI_COMM_WORLD, &id);
+
+    insert=(Row*)malloc(sizeof(Row));
+    delete=(Row*)malloc(sizeof(Row));
+
+    for (i = 0; i < k; i++){
+        /** Compute next generation */
+        nextGen(hash, insert, delete, n);
+    }
+
+    MPI_Finalize();
+
+    /** Print tree to stdout */
+    printTree(hash, n);
+
+    /** Free Linked Lists */
+    free(insert[i]);
+    free(delete[i]);
+
+    /** Free Tree */
     freeTree(hash, n);
-  }
-  fprintTree(hash1,n, fp);
-  free(insert);
-  freeTree(hash1, n);
-  fclose(fp);
-  printf("live cells at result.out\n");
-  return 0;
+
+    return 0;
 }
