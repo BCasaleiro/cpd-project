@@ -72,6 +72,234 @@ int countNeighbours(Tree ****hash, localization x, int n) {
 
 /** Insert nodes to kill in the delete Linked-List
     and to revive in the insert Linked-List */
+
+
+void preOrderf1(Node *root, Tree ****hash, int i, int j, Row insert, Row delete, int n) {
+    localization x;
+    int c;
+    if(root != NULL) {
+        x.x = i;
+        x.y = j;
+        x.z = root->data;
+
+        if (i==n-1) {
+            x.x = 0;
+            x.y = j;
+            x.z = root->data;
+        }else{
+            x.x = i + 1;
+            x.y = j;
+            x.z = root->data;
+        }
+        c = countNeighbours(hash,x, n);
+        if (c==2||c==3) {
+            add(insert, x);
+        }
+        preOrder(root->left, hash, i, j, insert, delete, n);
+        preOrder(root->right, hash, i, j, insert, delete, n);
+    }
+}
+
+void preOrderi1(Node *root, Tree ****hash, int i, int j, Row insert, Row delete, int n) {
+    localization x;
+    int c;
+    if(root != NULL) {
+        x.x = i;
+        x.y = j;
+        x.z = root->data;
+
+        if (i==0) {
+            x.x = n-1;
+            x.y = j;
+            x.z = root->data;
+        }else{
+            x.x = i - 1;
+            x.y = j;
+            x.z = root->data;
+        }
+        c = countNeighbours(hash,x, n);
+        if (c==2||c==3) {
+            add(insert, x);
+        }
+        preOrder(root->left, hash, i, j, insert, delete, n);
+        preOrder(root->right, hash, i, j, insert, delete, n);
+    }
+}
+
+void preOrderi(Node *root, Tree ****hash, int i, int j, Row insert, Row delete, int n) {
+    localization x;
+    int c;
+    if(root != NULL) {
+        x.x = i;
+        x.y = j;
+        x.z = root->data;
+        c = countNeighbours(hash,x, n);
+        if(c<2||c>4){
+            add(delete, x);
+        }
+
+        /*if (i==n-1) {
+            x.x = 0;
+            x.y = j;
+            x.z = root->data;
+        }else{
+            x.x = i + 1;
+            x.y = j;
+            x.z = root->data;
+        }
+        c = countNeighbours(hash,x, n);
+        if (c==2||c==3) {
+            add(insert, x);
+        }*/
+
+        if (j==n-1) {
+            x.x = i;
+            x.y = 0;
+            x.z = root->data;
+        }else{
+            x.x = i;
+            x.y = j+1;
+            x.z = root->data;
+        }
+        c = countNeighbours(hash,x, n);
+        if (c==2||c==3) {
+            add(insert, x);
+        }
+
+        if (j==0) {
+            x.x = i;
+            x.y = n-1;
+            x.z = root->data;
+        }else{
+            x.x = i;
+            x.y = j-1;
+            x.z = root->data;
+        }
+        c = countNeighbours(hash,x, n);
+        if (c==2||c==3) {
+            add(insert, x);
+        }
+
+        if (root->data==n-1) {
+            x.x = i;
+            x.y = j;
+            x.z = 0;
+        }else{
+            x.x = i;
+            x.y = j;
+            x.z = root->data+1;
+        }
+        c = countNeighbours(hash,x, n);
+        if (c==2||c==3) {
+            add(insert, x);
+        }
+
+        if (root->data==0) {
+            x.x = i;
+            x.y = j;
+            x.z = n-1;
+        }else{
+            x.x = i;
+            x.y = j;
+            x.z = root->data-1;
+        }
+        c = countNeighbours(hash,x, n);
+        if (c==2||c==3) {
+            add(insert, x);
+        }
+
+        preOrder(root->left, hash, i, j, insert, delete, n);
+        preOrder(root->right, hash, i, j, insert, delete, n);
+    }
+}
+
+void preOrderf(Node *root, Tree ****hash, int i, int j, Row insert, Row delete, int n) {
+    localization x;
+    int c;
+    if(root != NULL) {
+        x.x = i;
+        x.y = j;
+        x.z = root->data;
+        c = countNeighbours(hash,x, n);
+        if(c<2||c>4){
+            add(delete, x);
+        }
+
+        /*if (i==0) {
+            x.x = n-1;
+            x.y = j;
+            x.z = root->data;
+        }else{
+            x.x = i - 1;
+            x.y = j;
+            x.z = root->data;
+        }
+        c = countNeighbours(hash,x, n);
+        if (c==2||c==3) {
+            add(insert, x);
+        }*/
+
+        if (j==n-1) {
+            x.x = i;
+            x.y = 0;
+            x.z = root->data;
+        }else{
+            x.x = i;
+            x.y = j+1;
+            x.z = root->data;
+        }
+        c = countNeighbours(hash,x, n);
+        if (c==2||c==3) {
+            add(insert, x);
+        }
+
+        if (j==0) {
+            x.x = i;
+            x.y = n-1;
+            x.z = root->data;
+        }else{
+            x.x = i;
+            x.y = j-1;
+            x.z = root->data;
+        }
+        c = countNeighbours(hash,x, n);
+        if (c==2||c==3) {
+            add(insert, x);
+        }
+
+        if (root->data==n-1) {
+            x.x = i;
+            x.y = j;
+            x.z = 0;
+        }else{
+            x.x = i;
+            x.y = j;
+            x.z = root->data+1;
+        }
+        c = countNeighbours(hash,x, n);
+        if (c==2||c==3) {
+            add(insert, x);
+        }
+
+        if (root->data==0) {
+            x.x = i;
+            x.y = j;
+            x.z = n-1;
+        }else{
+            x.x = i;
+            x.y = j;
+            x.z = root->data-1;
+        }
+        c = countNeighbours(hash,x, n);
+        if (c==2||c==3) {
+            add(insert, x);
+        }
+
+        preOrder(root->left, hash, i, j, insert, delete, n);
+        preOrder(root->right, hash, i, j, insert, delete, n);
+    }
+}
+
 void preOrder(Node *root, Tree ****hash, int i, int j, Row insert, Row delete, int n) {
     localization x;
     int c;
@@ -183,10 +411,22 @@ void nextGen(Tree ****hash, Row **insert, Row **delete, int n) {
 
     /** For each coord (x, y) add to list the curret and the potentialy dead cells
         that may become alive */
-    for (i = 0; i < n; i++) {
+    for (i = 1; i < n-1; i++) {
         for (j = 0; j < n; j++) {
             preOrder((*hash)[i][j]->root, hash, i, j, insert[tid], delete[tid], n);
         }
+    }
+    for (j = 0; j < n; j++) {
+        preOrderi((*hash)[0][j]->root, hash, 0, j, insert[tid], delete[tid], n);
+    }
+    for (j = 0; j < n; j++) {
+        preOrderf((*hash)[n][j]->root, hash, n, j, insert[tid], delete[tid], n);
+    }
+    for (j = 0; j < n; j++) {
+        preOrderi1((*hash)[0-1][j]->root, hash, 0-1, j, insert[tid], delete[tid], n);
+    }
+    for (j = 0; j < n; j++) {
+        preOrderf1((*hash)[n+1][j]->root, hash, n+1, j, insert[tid], delete[tid], n);
     }
 
     /** For each node on the delete list remove it */
