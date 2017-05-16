@@ -53,6 +53,8 @@ int main(int argc, char *argv[]) {
 
     int * nodesf;
 	int * nodesi;
+    int * recv_nodesi;
+    int * recv_nodesf;
 
     for (i = 0; i < k; i++) {
         sizef=sizei=0;
@@ -107,14 +109,31 @@ int main(int argc, char *argv[]) {
         MPI_Wait(&request_down,&status_down);
         MPI_Wait(&request_up,&status_up);
 
-        //send receive messages
-
-
         printf("[%d] sent lower_count: %d; sent  upper_count: %d\n",id, sizei,sizef);
         printf("[%d] received lower_count: %d; received upper_count: %d\n",id, recv_size_i,recv_size_f);
 
-        /** Compute next generation */
+        //receive array Xi-1
+        if ( BLOCK_LOW(id,nprocs,n) > 0 ) {
+            MPI_Irecv(&recv_nodesi, recv_size_i, MPI_INT, BLOCK_OWNER(BLOCK_LOW(id,nprocs,n)-1,nprocs,n),LOWER_COUNT,MPI_COMM_WORLD,&request_down);
+        } else {
+            MPI_Irecv(&recv_nodesi, recv_size_i, MPI_INT, BLOCK_OWNER(n-1,nprocs,n),LOWER_COUNT,MPI_COMM_WORLD,&request_down);
+        }
+        //receive array Xf+1
+        MPI_Irecv(&recv_nodesf, recv_size_f, MPI_INT, BLOCK_OWNER(BLOCK_LOW((id+1)%nprocs,nprocs,n),nprocs,n),UPPER_COUNT,MPI_COMM_WORLD,&request_up);
 
+        //send xi
+        if ( BLOCK_LOW(id,nprocs,n) > 0 ) {
+            MPI_Send(&nodesi, sizei, MPI_INT, BLOCK_OWNER(BLOCK_LOW(id,nprocs,n)-1,nprocs,n),UPPER_COUNT,MPI_COMM_WORLD);
+        } else {
+            MPI_Send(&nodesi, sizei, MPI_INT, BLOCK_OWNER(n-1,nprocs,n),UPPER_COUNT,MPI_COMM_WORLD);
+        }
+        //send xf
+        MPI_Send(&nodesf, sizef, MPI_INT, BLOCK_OWNER(BLOCK_LOW((id+1)%nprocs,nprocs,n),nprocs,n),LOWER_COUNT,MPI_COMM_WORLD);
+
+        MPI_Wait(&request_down,&status_down);
+        MPI_Wait(&request_up,&status_up);
+
+        /** Compute next generation */
         nextGen(hash, insert, delete, n, id, nprocs);
     }
 
