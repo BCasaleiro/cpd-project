@@ -48,11 +48,63 @@ int main(int argc, char *argv[]) {
     insert=(Row*)malloc(sizeof(Row));
     delete=(Row*)malloc(sizeof(Row));
 
+    int sizef, sizei, k;
+    sizef=sizei=k=0;
+
+    int * nodesf, nodesi;
+
     for (i = 0; i < k; i++) {
-	/** Send and Receive Information */
-	MPI_IRecv
+
+        sizef=sizei=0;
+        k=0;
+
+        //get number of nodes
+        for(int j=0; j<n; j++){
+          sizei = hash[1][j]->size + sizei;
+        }
+
+        for(int j=0; j<n; j++){
+          sizef = hash[BLOCK_SIZE(id, nprocs, n)+1][j]->size + sizef;
+        }
+
+        //alloc memory for sending arrays
+        nodesi = (int*)malloc(sizei*sizeof(int)*2);
+        nodesf = (int*)malloc(sizef*sizeof(int)*2);
+
+        //fill the arrays with yz nodes
+        for (size_t j = 0; j < n; j++) {
+          fillArray(hash[1][j]->root, nodesi, j, &k);
+        }
+        k=0;
+        for (size_t j = 0; j < n; j++) {
+          fillArray(hash[BLOCK_SIZE(id, nprocs, n)+1][j]->root, nodesf, j, &k);
+        }
+
+
+
+	      /** Send and Receive Information */
+	      MPI_Send(&sizef, 1, MPI_INT, 1, 0, MPI_COMM_WORLD);//send size up
+        MPI_Send(&sizei, 1, MPI_INT, 1, 0, MPI_COMM_WORLD);//send size down
+        MPI_Send(&nodesf, 1, MPI_INT, 1, 0, MPI_COMM_WORLD);//send nodes up
+        MPI_Send(&nodesi, 1, MPI_INT, 1, 0, MPI_COMM_WORLD);//send nodes down
+
+
+
+        MPI_Recv(&rcvdsizef, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);//receive size up
+        MPI_Recv(&rcvdsizei, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);//receive size down
+
+        rcvdnodesf = (int*)malloc(sizeof(int)*rcvdsizef*2);
+        rcvdnodesi = (int*)malloc(sizeof(int)*rcvdsizei*2);
+
+        MPI_Recv(&rcvdnodesf, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);//receive nodes up
+        MPI_Recv(&rcvdnodesi, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);//receive nodes down
+
+        
+
+        MPI_Barrier();
+
         /** Compute next generation */
-        nextGen(hash, insert, delete, n);
+        nextGen(hash, insert, delete, n, id, nprocs);
     }
 
     /** Free Linked Lists */

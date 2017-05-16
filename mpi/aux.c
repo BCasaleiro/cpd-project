@@ -452,10 +452,10 @@ void nextGen(Tree ****hash, Row *insert, Row *delete, int n, int id, int nprocs)
     }
 
     /** For each node on the insert list add or ignore if already exists a new live cell */
- 
+
    for (aux = insert->first; aux!=NULL; aux=aux->next) {
-        (*hash)[aux->data.x][aux->data.y]->root = insertTree(aux->data.z, (*hash)[aux->data.x][aux->data.y]->root);
-        (*hash)[aux->data.x][aux->data.y]->size=((*hash)[aux->data.x][aux->data.y]->size) + 1;
+        (*hash)[aux->data.x][aux->data.y]->root = insertTree(aux->data.z, (*hash)[aux->data.x][aux->data.y]->root, &(*hash)[aux->data.x][aux->data.y]->size);
+        //(*hash)[aux->data.x][aux->data.y]->size=((*hash)[aux->data.x][aux->data.y]->size) + 1;
     }
 
     /** Free threads insert and delete Linked-Lists */
@@ -493,8 +493,8 @@ int readFile(Tree ****hash, char *file, int id, int nprocs) {
     while (fscanf(fp,"%d %d %d", &x, &y, &z)==3) {
 	//printf("[%d] %d %d\n", id, BLOCK_OWNER( x, nprocs, n), x);
         if( BLOCK_OWNER( x, nprocs, n) == id ) {
-          (*hash)[1 + x - BLOCK_LOW(id, nprocs, n)][y]->root=insertTree(z,(*hash)[1 + x - BLOCK_LOW(id, nprocs, n)][y]->root);
-          (*hash)[1 + x - BLOCK_LOW(id, nprocs, n)][y]->size=((*hash)[1 + x - BLOCK_LOW(id, nprocs, n)][y]->size) + 1;
+          (*hash)[1 + x - BLOCK_LOW(id, nprocs, n)][y]->root=insertTree(z,(*hash)[1 + x - BLOCK_LOW(id, nprocs, n)][y]->root, &(*hash)[1 + x - BLOCK_LOW(id, nprocs, n)][y]->size);
+          //(*hash)[1 + x - BLOCK_LOW(id, nprocs, n)][y]->size=((*hash)[1 + x - BLOCK_LOW(id, nprocs, n)][y]->size) + 1;
         }
     }
 

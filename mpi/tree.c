@@ -82,10 +82,11 @@ int getBalance(Node *N) {
     return height(N->left) - height(N->right);
 }
 
-Node* insertTree(int key, Node* node) {
+Node* insertTree(int key, Node* node, int *size) {
     /* 1.  Perform the normal BST rotation */
     if (node == NULL){
         //omp_set_lock(&lck_a);
+        *size++;
         return(newNode(key));
         //omp_unset_lock(&lck_a);
     }
@@ -226,6 +227,18 @@ void freeTree(Tree ****hash, int n) {
     }
     free(*hash);
     free(hash);
+}
+
+void fillArray(Node* t, int* nodes, int y, int *k) {
+    if (t == NULL)
+    return;
+    fillArray(t->left, nodes, j, k);
+    nodes[*k] = y;
+    nodes[*k + 1] = t->data;
+    *k=*k + 2;
+
+
+    fillArray(t->right, node, j, k);
 }
 
 Node *minValueNode(Node *node) {
