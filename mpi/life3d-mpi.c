@@ -87,16 +87,16 @@ int main(int argc, char *argv[]) {
     	printf("\n");
 
         //receive count of members of array Xi-1
-	    MPI_Irecv(&recv_size_i,1,MPI_INT, BLOCK_OWNER ( BLOCK_LOW ( id , nprocs , n ) - 1 ,nprocs , n ),LOWER_COUNT,MPI_COMM_WORLD,&request_down);
+	    MPI_Irecv(&recv_size_i, 1, MPI_INT, BLOCK_OWNER(BLOCK_LOW(id,nprocs,n)-1,nprocs,n),LOWER_COUNT,MPI_COMM_WORLD,&request_down);
 
         //receive count of members of array Xf+1
-	    MPI_Irecv(&recv_size_f,1,MPI_INT, BLOCK_OWNER ( BLOCK_LOW ( id + 1 , nprocs , n )  ,nprocs , n ),UPPER_COUNT,MPI_COMM_WORLD,&request_up);
+	    MPI_Irecv(&recv_size_f, 1, MPI_INT, BLOCK_OWNER(BLOCK_LOW(id+1,nprocs,n),nprocs,n),UPPER_COUNT,MPI_COMM_WORLD,&request_up);
 
         //send xi count
-        MPI_Send(&sizei, 1,MPI_INT,BLOCK_OWNER (BLOCK_LOW (id, nprocs, n) -1 ,nprocs, n),UPPER_COUNT,MPI_COMM_WORLD);
+        MPI_Send(&sizei, 1, MPI_INT, BLOCK_OWNER(BLOCK_LOW(id,nprocs,n)-1,nprocs,n),UPPER_COUNT,MPI_COMM_WORLD);
 
         //send xf count
-        MPI_Send(&sizef, 1,MPI_INT,BLOCK_OWNER (BLOCK_LOW (id+1, nprocs, n) ,nprocs, n),LOWER_COUNT,MPI_COMM_WORLD);
+        MPI_Send(&sizef, 1, MPI_INT, BLOCK_OWNER(BLOCK_LOW(id+1,nprocs,n),nprocs,n),LOWER_COUNT,MPI_COMM_WORLD);
 
         MPI_Wait(&request_down,&status_down);
         MPI_Wait(&request_up,&status_up);
