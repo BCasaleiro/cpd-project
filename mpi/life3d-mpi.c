@@ -16,7 +16,7 @@
 int main(int argc, char *argv[]) {
     Tree ****hash;
     char name[246];
-    int i, k, n;
+    int i, k, n, j;
     int id, nprocs;
     Row *insert, *delete;
 	MPI_Request request_up;
@@ -55,10 +55,9 @@ int main(int argc, char *argv[]) {
 	int * nodesi;
 
     for (i = 0; i < k; i++) {
-
         sizef=sizei=0;
         aux=0;
-	int j;
+
         //get number of nodes
         for(j=0; j<n; j++){
           sizei = (*hash)[1][j]->size + sizei;
@@ -80,39 +79,33 @@ int main(int argc, char *argv[]) {
         for ( j = 0; j < n; j++) {
           fillArray((*hash)[BLOCK_SIZE(id, nprocs, n)+1][j]->root, nodesf, j, &aux);
         }
-	
-	
-	printf("[%d] ", id);
-        for ( j = 0; j < 2*sizei; j++) {
-          printf("%d ", nodesi[j]);
-        }
-	printf("\n");
-	
-//send receive messages
+
+    	printf("[%d] ", id);
+            for ( j = 0; j < 2*sizei; j++) {
+              printf("%d ", nodesi[j]);
+            }
+    	printf("\n");
+
+        //receive count of members of array Xi-1
+	    MPI_Irecv(&recv_size_i,1,MPI_INT, BLOCK_OWNER ( BLOCK_LOW ( id , nprocs , n ) - 1 ,nprocs , n ),LOWER_COUNT,MPI_COMM_WORLD,&request_down);
+
+        //receive count of members of array Xf+1
+	    MPI_Irecv(&recv_size_f,1,MPI_INT, BLOCK_OWNER ( BLOCK_LOW ( id + 1 , nprocs , n )  ,nprocs , n ),UPPER_COUNT,MPI_COMM_WORLD,&request_up);
+
+        //send xi count
+        MPI_Send(&sizei, 1,MPI_INT,BLOCK_OWNER (BLOCK_LOW (id, nprocs, n) -1 ,nprocs, n),UPPER_COUNT,MPI_COMM_WORLD);
+
+        //send xf count
+        MPI_Send(&sizef, 1,MPI_INT,BLOCK_OWNER (BLOCK_LOW (id+1, nprocs, n) ,nprocs, n),LOWER_COUNT,MPI_COMM_WORLD);
+
+        MPI_Wait(&request_down,&status_down);
+        MPI_Wait(&request_up,&status_up);
+
+        //send receive messages
 
 
-//receive count of members of array Xi-1
-	MPI_Irecv(&recv_size_i,1,MPI_INT, BLOCK_OWNER ( BLOCK_LOW ( id , nprocs , n ) - 1 ,nprocs , n ),LOWER_COUNT,MPI_COMM_WORLD,&request_down);
-        
-
-//receive count of members of array Xf+1
-	MPI_Irecv(&recv_size_f,1,MPI_INT, BLOCK_OWNER ( BLOCK_LOW ( id+1 , nprocs , n )  ,nprocs , n ),UPPER_COUNT,MPI_COMM_WORLD,&request_up);
-        
-//send xi count 
-MPI_Send(&sizei, 1,MPI_INT,BLOCK_OWNER (BLOCK_LOW (id, nprocs, n) -1 ,nprocs, n),UPPER_COUNT,MPI_COMM_WORLD);
-
-
-
-//send xf count 
-MPI_Send(&sizef, 1,MPI_INT,BLOCK_OWNER (BLOCK_LOW (id+1, nprocs, n) ,nprocs, n),LOWER_COUNT,MPI_COMM_WORLD);
-
-
-
-MPI_Wait(&request_down,&status_down);
-
-MPI_Wait(&request_up,&status_up);
-printf("[%d] sent lower_count: %d; sent  upper_count: %d \n ",id, sizei,sizef);
-printf("[%d] received lower_count: %d; received upper_count: %d \n ",id, recv_size_i,recv_size_f);
+        printf("[%d] sent lower_count: %d; sent  upper_count: %d \n ",id, sizei,sizef);
+        printf("[%d] received lower_count: %d; received upper_count: %d \n ",id, recv_size_i,recv_size_f);
 
         /** Compute next generation */
 
