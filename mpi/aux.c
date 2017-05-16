@@ -412,39 +412,29 @@ void nextGen(Tree ****hash, Row *insert, Row *delete, int n, int id, int nprocs)
 
     /** For each coord (x, y) add to list the curret and the potentialy dead cells
         that may become alive */
-    for (i = 1; i < BLOCK_SIZE(id, nprocs, n) - 1; i++) {
+    for (i = 2; i < BLOCK_SIZE(id, nprocs, n) - 1; i++) {
         for (j = 0; j < n; j++) {
             preOrder((*hash)[i][j]->root, hash, i, j, insert, delete, n);
         }
     }
 
     for (j = 0; j < n; j++) {
-        preOrderi((*hash)[0][j]->root, hash, 0, j, insert, delete, n);
+        preOrderi((*hash)[1][j]->root, hash, 1, j, insert, delete, n);
     }
 
     for (j = 0; j < n; j++) {
         preOrderf((*hash)[BLOCK_SIZE(id, nprocs, n)][j]->root, hash, BLOCK_SIZE(id, nprocs, n), j, insert, delete, n);
     }
 
-    /*if(pcGetID()==0){
-      for (j = 0; j < n; j++) {
-          preOrderi1((*hash)[n][j]->root, hash, n, j, insert, delete, n);
-      }
-    }else{
-      for (j = 0; j < n; j++) {
-          preOrderi1((*hash)[(id*n)/np-1][j]->root, hash, (id*n)/np-1, j, insert, delete, n);
-      }
+    for (j = 0; j < n; j++) {
+        preOrderi1((*hash)[0][j]->root, hash, 0, j, insert, delete, n);
     }
 
-    if(pcGetID()==np-1){
-      for (j = 0; j < n; j++) {
-          preOrderf1((*hash)[1][j]->root, hash, 1, j, insert[tid], delete[tid], n);
-      }
-    }else{
-      for (j = 0; j < n; j++) {
-          preOrderf1((*hash)[(id*n)/np+1][j]->root, hash, (id*n)/np+1, j, insert[tid], delete[tid], n);
-      }
-    }*/
+    for (j = 0; j < n; j++) {
+        preOrderf1((*hash)[BLOCK_SIZE(id, nprocs, n)+1][j]->root, hash, BLOCK_SIZE(id, nprocs, n)+1, j, insert[tid], delete[tid], n);
+    }
+
+    
     /** For each node on the delete list remove it */
     for (aux = delete->first; aux!=NULL; aux=aux->next) {
         (*hash)[aux->data.x][aux->data.y]->root = deleteNode((*hash)[aux->data.x][aux->data.y]->root,aux->data.z);
