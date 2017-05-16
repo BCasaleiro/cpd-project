@@ -3,6 +3,7 @@
 #include<string.h>
 #include"tree.h"
 #include"list.h"
+#include"aux.h"
 
 /** Count the alive neighboors of a cell */
 int countNeighbours(Tree ****hash, localization x, int n) {
@@ -95,8 +96,8 @@ void preOrderf1(Node *root, Tree ****hash, int i, int j, Row* insert, Row* delet
         if (c==2||c==3) {
             add(insert, x);
         }
-        preOrder(root->left, hash, i, j, insert, delete, n);
-        preOrder(root->right, hash, i, j, insert, delete, n);
+        preOrderf1(root->left, hash, i, j, insert, delete, n);
+        preOrderf1(root->right, hash, i, j, insert, delete, n);
     }
 }
 
@@ -121,8 +122,8 @@ void preOrderi1(Node *root, Tree ****hash, int i, int j, Row* insert, Row* delet
         if (c==2||c==3) {
             add(insert, x);
         }
-        preOrder(root->left, hash, i, j, insert, delete, n);
-        preOrder(root->right, hash, i, j, insert, delete, n);
+        preOrderi1(root->left, hash, i, j, insert, delete, n);
+        preOrderi1(root->right, hash, i, j, insert, delete, n);
     }
 }
 
@@ -208,8 +209,8 @@ void preOrderi(Node *root, Tree ****hash, int i, int j, Row* insert, Row* delete
             add(insert, x);
         }
 
-        preOrder(root->left, hash, i, j, insert, delete, n);
-        preOrder(root->right, hash, i, j, insert, delete, n);
+        preOrderi(root->left, hash, i, j, insert, delete, n);
+        preOrderi(root->right, hash, i, j, insert, delete, n);
     }
 }
 
@@ -295,8 +296,8 @@ void preOrderf(Node *root, Tree ****hash, int i, int j, Row* insert, Row* delete
             add(insert, x);
         }
 
-        preOrder(root->left, hash, i, j, insert, delete, n);
-        preOrder(root->right, hash, i, j, insert, delete, n);
+        preOrderf(root->left, hash, i, j, insert, delete, n);
+        preOrderf(root->right, hash, i, j, insert, delete, n);
     }
 }
 
@@ -402,16 +403,16 @@ void preOrder(Node *root, Tree ****hash, int i, int j, Row* insert, Row* delete,
 }
 
 void nextGen(Tree ****hash, Row *insert, Row *delete, int n) {
-    int i, j;
+    /*int i, j;
     List *aux;
-
+*/
     /** Initialize its insert and delete Linked-Lists */
     init(insert);
     init(delete);
 
     /** For each coord (x, y) add to list the curret and the potentialy dead cells
         that may become alive */
-    for (i = (id*n)/np+1; i < ((id+1)*n)/np-1; i++) {
+ /*   for (i = (id*n)/np+1; i < ((id+1)*n)/np-1; i++) {
         for (j = 0; j < n; j++) {
             preOrder((*hash)[i][j]->root, hash, i, j, insert[tid], delete[tid], n);
         }
@@ -443,23 +444,25 @@ void nextGen(Tree ****hash, Row *insert, Row *delete, int n) {
       for (j = 0; j < n; j++) {
           preOrderf1((*hash)[(id*n)/np+1][j]->root, hash, (id*n)/np+1, j, insert[tid], delete[tid], n);
       }
-    }
-
+    }*/
     /** For each node on the delete list remove it */
-    for (aux = delete[tid]->first; aux!=NULL; aux=aux->next) {
+    /*for (aux = delete[tid]->first; aux!=NULL; aux=aux->next) {
         (*hash)[aux->data.x][aux->data.y]->root = deleteNode((*hash)[aux->data.x][aux->data.y]->root,aux->data.z);
         (*hash)[aux->data.x][aux->data.y]->size=((*hash)[aux->data.x][aux->data.y]->size) - 1;
     }
-
+*/
     /** For each node on the insert list add or ignore if already exists a new live cell */
-    for (aux = insert[tid]->first; aux!=NULL; aux=aux->next) {
+ 
+/*   for (aux = insert[tid]->first; aux!=NULL; aux=aux->next) {
         (*hash)[aux->data.x][aux->data.y]->root = insertTree(aux->data.z, (*hash)[aux->data.x][aux->data.y]->root);
         (*hash)[aux->data.x][aux->data.y]->size=((*hash)[aux->data.x][aux->data.y]->size) + 1;
     }
-
+*/
     /** Free threads insert and delete Linked-Lists */
     freeList(insert);
     freeList(delete);
+
+
 }
 
 /** Read File */

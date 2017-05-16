@@ -133,7 +133,7 @@ Node* insertTree(int key, Node* node) {
 void display_avl(Node* t, int x, int y, int id) {
     if (t == NULL)
     return;
-    display_avl(t->left, x, y);
+    display_avl(t->left, x, y,id);
     printf("[%d] %d %d %d\n", id, x, y, t->data);
 
     /*if(t->left != NULL)
@@ -143,7 +143,7 @@ void display_avl(Node* t, int x, int y, int id) {
     printf("\n");*/
 
 
-    display_avl(t->right, x, y);
+    display_avl(t->right, x, y,id);
 }
 
 void printTree(Tree ****hash, int n, int id) {
