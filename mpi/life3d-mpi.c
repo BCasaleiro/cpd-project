@@ -184,14 +184,15 @@ int main(int argc, char *argv[]) {
         /** Compute next generation */
         nextGen(hash, insert, delete, n, id, nprocs);
     }
-
+    fflush(stdout);
+    MPI_Barrier(MPI_COMM_WORLD);
+    printfinalTree(hash, n, id, nprocs);
     /** Free Linked Lists */
     //free(insert[i]);
     //free(delete[i]);
 
     /** Free Tree */
     //freeTree(hash, n);
-
     MPI_Finalize();
 
     /** Print tree to stdout */

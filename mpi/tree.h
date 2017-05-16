@@ -26,9 +26,11 @@ int getBalance(Node *N);
 
 Node* insertTree(int key, Node* node, int * size);
 
-void display_avl(Node* t, int x, int y, int id, int nprocs);
+void display_avl(Node* t, int x, int y, int id, int nprocs, int n);
 
 void printTree(Tree ****hash, int n, int id, int nprocs);
+
+void printfinalTree(Tree ****hash, int n, int id, int nprocs);
 
 void fdisplay_avl(Node* t, int x, int y, FILE *fp);
 

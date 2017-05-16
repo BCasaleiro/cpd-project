@@ -79,19 +79,9 @@ void preOrderf1(Node *root, Tree ****hash, int i, int j, Row* insert, Row* delet
     localization x;
     int c;
     if(root != NULL) {
-        x.x = i;
+        x.x = i - 1;
         x.y = j;
         x.z = root->data;
-
-        if (i==n-1) {
-            x.x = 0;
-            x.y = j;
-            x.z = root->data;
-        }else{
-            x.x = i + 1;
-            x.y = j;
-            x.z = root->data;
-        }
         c = countNeighbours(hash,x, n);
         if (c==2||c==3) {
             add(insert, x);
@@ -104,20 +94,10 @@ void preOrderf1(Node *root, Tree ****hash, int i, int j, Row* insert, Row* delet
 void preOrderi1(Node *root, Tree ****hash, int i, int j, Row* insert, Row* delete, int n) {
     localization x;
     int c;
-    if(root != NULL) {
-        x.x = i;
+    if(root != NULL) { 
+        x.x = i + 1;
         x.y = j;
         x.z = root->data;
-
-        if (i==0) {
-            x.x = n-1;
-            x.y = j;
-            x.z = root->data;
-        }else{
-            x.x = i - 1;
-            x.y = j;
-            x.z = root->data;
-        }
         c = countNeighbours(hash,x, n);
         if (c==2||c==3) {
             add(insert, x);
@@ -438,7 +418,7 @@ void nextGen(Tree ****hash, Row *insert, Row *delete, int n, int id, int nprocs)
 
 	printf("[%d] Preorder4\n", id);
 
-    for (j = 0; j < n; j++) {
+   for (j = 0; j < n; j++) {
         preOrderf1((*hash)[BLOCK_SIZE(id, nprocs, n)+1][j]->root, hash, BLOCK_SIZE(id, nprocs, n)+1, j, insert, delete, n);
     }
 

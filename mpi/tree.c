@@ -136,11 +136,11 @@ Node* insertTree(int key, Node* node, int *size) {
     return node;
 }
 
-void display_avl(Node* t, int x, int y, int id, int nprocs) {
+void display_avl(Node* t, int x, int y, int id, int nprocs, int n) {
     if (t == NULL)
     return;
-    display_avl(t->left, x, y,id, nprocs);
-    printf("[%d] %d %d %d\n", id, x, y, t->data);
+    display_avl(t->left, x, y,id, nprocs, n);
+    printf("%d %d %d\n", x-1+BLOCK_LOW(id, nprocs, n), y, t->data);
 
     /*if(t->left != NULL)
     printf("(L:%d)\n",t->left->data);
@@ -149,7 +149,7 @@ void display_avl(Node* t, int x, int y, int id, int nprocs) {
     printf("\n");*/
 
 
-    display_avl(t->right, x, y,id, nprocs);
+    display_avl(t->right, x, y,id, nprocs, n);
 }
 
 void printTree(Tree ****hash, int n, int id, int nprocs) {
@@ -158,7 +158,20 @@ void printTree(Tree ****hash, int n, int id, int nprocs) {
         for (j = 0; j < n; j++) {
             if ((*hash)[i][j]->size!=0) {
                 //printf("%d %d ", i, j);
-                display_avl((*hash)[i][j]->root, i, j, id, nprocs);
+                display_avl((*hash)[i][j]->root, i, j, id, nprocs, n);
+                //printf("\n");
+            }
+        }
+    }
+}
+
+void printfinalTree(Tree ****hash, int n, int id, int nprocs) {
+    int i,j;
+    for (i = 1; i <  1 + BLOCK_SIZE(id, nprocs, n); i++) {
+        for (j = 0; j < n; j++) {
+            if ((*hash)[i][j]->size!=0) {
+                //printf("%d %d ", i, j);
+                display_avl((*hash)[i][j]->root, i, j, id, nprocs, n);
                 //printf("\n");
             }
         }
