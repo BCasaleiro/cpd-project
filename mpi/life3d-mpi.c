@@ -76,10 +76,11 @@ int main(int argc, char *argv[]) {
           fillArray((*hash)[1][j]->root, nodesi, j, &aux);
         }
 
-        k=0;
+        aux=0;
         for ( j = 0; j < n; j++) {
           fillArray((*hash)[BLOCK_SIZE(id,nprocs,n)][j]->root, nodesf, j, &aux);
         }
+
 
         //receive count of members of array Xi-1
         if ( BLOCK_LOW(id,nprocs,n) > 0 ) {
@@ -114,6 +115,16 @@ int main(int argc, char *argv[]) {
         printf("[%d] received lower_count: %d; received upper_count: %d\n",id, recv_size_i,recv_size_f);
 
         /** Compute next generation */
+
+
+        for(j=0;j<2*recv_size_f;j++){
+            (*hash)[0][recv_nodesi[j]]->root = insertTree(recv_nodesi[j+1], (*hash)[0][recv_nodesi[j]]->root, &(*hash)[0][recv_nodesi[j]]->size);
+            j++;
+        }
+
+        for(j=0;j<2*recv_size_f;j++){
+            (*hash)[0][recv_nodesf[j]]->root = insertTree(recv_nodesf[j+1], (*hash)[0][recv_nodesf[j]]->root, &(*hash)[0][recv_nodesf[j]]->size);
+        }
 
         nextGen(hash, insert, delete, n, id, nprocs);
     }
