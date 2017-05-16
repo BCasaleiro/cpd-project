@@ -169,16 +169,17 @@ int main(int argc, char *argv[]) {
 	printf("]\n");
 	*/
 
-        for(j=0;j<2*recv_size_f;j++){
+        for(j=0;j<2*recv_size_i;j++){
             (*hash)[0][recv_nodesi[j]]->root = insertTree(recv_nodesi[j+1], (*hash)[0][recv_nodesi[j]]->root, &(*hash)[0][recv_nodesi[j]]->size);
             j++;
         }
 
         for(j=0;j<2*recv_size_f;j++){
-            (*hash)[0][recv_nodesf[j]]->root = insertTree(recv_nodesf[j+1], (*hash)[0][recv_nodesf[j]]->root, &(*hash)[0][recv_nodesf[j]]->size);
+            (*hash)[BLOCK_SIZE(id,nprocs,n)+1][recv_nodesf[j]]->root = insertTree(recv_nodesf[j+1], (*hash)[BLOCK_SIZE(id,nprocs,n)+1][recv_nodesf[j]]->root, &(*hash)[BLOCK_SIZE(id,nprocs,n)+1][recv_nodesf[j]]->size);
+		j++;
         }
 
-	printTree(hash, n, id, nprocs);
+	//printTree(hash, n, id, nprocs);
 
         /** Compute next generation */
         nextGen(hash, insert, delete, n, id, nprocs);
