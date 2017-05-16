@@ -86,15 +86,15 @@ Node* insertTree(int key, Node* node, int *size) {
     /* 1.  Perform the normal BST rotation */
     if (node == NULL){
         //omp_set_lock(&lck_a);
-        *size++;
+        *size=*size+1;
         return(newNode(key));
         //omp_unset_lock(&lck_a);
     }
 
     if (key < node->data)
-    node->left  = insertTree(key,node->left);
+    node->left  = insertTree(key,node->left, size);
     else if (key > node->data)
-    node->right = insertTree(key,node->right);
+    node->right = insertTree(key,node->right,size);
     else // Equal keys not allowed
     return node;
 
@@ -232,13 +232,13 @@ void freeTree(Tree ****hash, int n) {
 void fillArray(Node* t, int* nodes, int y, int *k) {
     if (t == NULL)
     return;
-    fillArray(t->left, nodes, j, k);
+    fillArray(t->left, nodes, y, k);
     nodes[*k] = y;
     nodes[*k + 1] = t->data;
     *k=*k + 2;
 
 
-    fillArray(t->right, node, j, k);
+    fillArray(t->right, nodes, y, k);
 }
 
 Node *minValueNode(Node *node) {

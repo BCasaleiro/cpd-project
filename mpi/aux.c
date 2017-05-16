@@ -493,7 +493,8 @@ int readFile(Tree ****hash, char *file, int id, int nprocs) {
     while (fscanf(fp,"%d %d %d", &x, &y, &z)==3) {
 	//printf("[%d] %d %d\n", id, BLOCK_OWNER( x, nprocs, n), x);
         if( BLOCK_OWNER( x, nprocs, n) == id ) {
-          (*hash)[1 + x - BLOCK_LOW(id, nprocs, n)][y]->root=insertTree(z,(*hash)[1 + x - BLOCK_LOW(id, nprocs, n)][y]->root, &(*hash)[1 + x - BLOCK_LOW(id, nprocs, n)][y]->size);
+          (*hash)[1 + x - BLOCK_LOW(id, nprocs, n)][y]->root=insertTree(z,(*hash)[1 + x - BLOCK_LOW(id, nprocs, n)][y]->root, &((*hash)[1 + x - BLOCK_LOW(id, nprocs, n)][y]->size));
+		printf("[%d] (%d, %d), z size: %d\n",id, x,y,  ((*hash)[1 + x - BLOCK_LOW(id, nprocs, n)][y]->size));
           //(*hash)[1 + x - BLOCK_LOW(id, nprocs, n)][y]->size=((*hash)[1 + x - BLOCK_LOW(id, nprocs, n)][y]->size) + 1;
         }
     }

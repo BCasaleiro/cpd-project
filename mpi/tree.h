@@ -43,3 +43,6 @@ void freeTree(Tree ****hash, int n);
 Node *minValueNode(Node *node);
 
 Node* deleteNode(Node* root, int key);
+
+
+void fillArray(Node* t, int* nodes, int y, int *k); 

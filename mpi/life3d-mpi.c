@@ -48,23 +48,24 @@ int main(int argc, char *argv[]) {
     insert=(Row*)malloc(sizeof(Row));
     delete=(Row*)malloc(sizeof(Row));
 
-    int sizef, sizei, k;
-    sizef=sizei=k=0;
+    int sizef, sizei, aux,recv_size_f, recv_size_i;
+    sizef=sizei=aux=0;
 
-    int * nodesf, nodesi;
+    int * nodesf;
+	int * nodesi;
 
     for (i = 0; i < k; i++) {
 
         sizef=sizei=0;
-        k=0;
-
+        aux=0;
+	int j;
         //get number of nodes
-        for(int j=0; j<n; j++){
-          sizei = hash[1][j]->size + sizei;
+        for(j=0; j<n; j++){
+          sizei = (*hash)[1][j]->size + sizei;
         }
 
-        for(int j=0; j<n; j++){
-          sizef = hash[BLOCK_SIZE(id, nprocs, n)+1][j]->size + sizef;
+        for(j=0; j<n; j++){
+          sizef = (*hash)[BLOCK_SIZE(id, nprocs, n)+1][j]->size + sizef;
         }
 
         //alloc memory for sending arrays
@@ -72,38 +73,49 @@ int main(int argc, char *argv[]) {
         nodesf = (int*)malloc(sizef*sizeof(int)*2);
 
         //fill the arrays with yz nodes
-        for (size_t j = 0; j < n; j++) {
-          fillArray(hash[1][j]->root, nodesi, j, &k);
+        for (j = 0; j < n; j++) {
+          fillArray((*hash)[1][j]->root, nodesi, j, &aux);
         }
         k=0;
-        for (size_t j = 0; j < n; j++) {
-          fillArray(hash[BLOCK_SIZE(id, nprocs, n)+1][j]->root, nodesf, j, &k);
+        for ( j = 0; j < n; j++) {
+          fillArray((*hash)[BLOCK_SIZE(id, nprocs, n)+1][j]->root, nodesf, j, &aux);
         }
+	
+	
+	printf("[%d] ", id);
+        for ( j = 0; j < 2*sizei; j++) {
+          printf("%d ", nodesi[j]);
+        }
+	printf("\n");
+	
+//send receive messages
 
 
-
-	      /** Send and Receive Information */
-	      MPI_Send(&sizef, 1, MPI_INT, 1, 0, MPI_COMM_WORLD);//send size up
-        MPI_Send(&sizei, 1, MPI_INT, 1, 0, MPI_COMM_WORLD);//send size down
-        MPI_Send(&nodesf, 1, MPI_INT, 1, 0, MPI_COMM_WORLD);//send nodes up
-        MPI_Send(&nodesi, 1, MPI_INT, 1, 0, MPI_COMM_WORLD);//send nodes down
-
-
-
-        MPI_Recv(&rcvdsizef, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);//receive size up
-        MPI_Recv(&rcvdsizei, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);//receive size down
-
-        rcvdnodesf = (int*)malloc(sizeof(int)*rcvdsizef*2);
-        rcvdnodesi = (int*)malloc(sizeof(int)*rcvdsizei*2);
-
-        MPI_Recv(&rcvdnodesf, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);//receive nodes up
-        MPI_Recv(&rcvdnodesi, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);//receive nodes down
-
+//receive count of members of array Xi-1
+	MPI_Irecv(&recv_size_i,1,MPI_INT, BLOCK_OWNER ( BLOCK_LOW ( id , nprocs , n ) - 1 ,nprocs , n ),LOWER_COUNT,MPI_COMM_WORLD,&request_down);
         
 
-        MPI_Barrier();
+//receive count of members of array Xf+1
+	MPI_Irecv(&recv_size_f,1,MPI_INT, BLOCK_OWNER ( BLOCK_LOW ( id+1 , nprocs , n )  ,nprocs , n ),UPPER_COUNT,MPI_COMM_WORLD,&request_up);
+        
+//send xi count 
+MPI_Send(&sizei, 1,MPI_INT,BLOCK_OWNER (BLOCK_LOW (id, nprocs, n) -1 ,nprocs, n),UPPER_COUNT,MPI_COMM_WORLD);
+
+
+
+//send xf count 
+MPI_Send(&sizef, 1,MPI_INT,BLOCK_OWNER (BLOCK_LOW (id+1, nprocs, n) ,nprocs, n),LOWER_COUNT,MPI_COMM_WORLD);
+
+
+
+MPI_Wait(&request_down,&status_down);
+
+MPI_Wait(&request_up,&status_up);
+printf("[%d] sent lower_count: %d; sent  upper_count: %d \n ",id, sizei,sizef);
+printf("[%d] received lower_count: %d; received upper_count: %d \n ",id, recv_size_i,recv_size_f);
 
         /** Compute next generation */
+
         nextGen(hash, insert, delete, n, id, nprocs);
     }
 
