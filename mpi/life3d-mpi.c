@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
 
     /** Read File */
     n = readFile(hash, name, id, nprocs);
-    printTree(hash, n, id, nprocs);
+    //printTree(hash, n, id, nprocs);
 
     insert=(Row*)malloc(sizeof(Row));
     delete=(Row*)malloc(sizeof(Row));
@@ -82,21 +82,24 @@ int main(int argc, char *argv[]) {
         }
 	
 	
-	printf("[%d] ", id);
+/*	printf("[%d] ", id);
         for ( j = 0; j < 2*sizei; j++) {
           printf("%d ", nodesi[j]);
         }
 	printf("\n");
-	
+*/	
 //send receive messages
 
 
 //receive count of members of array Xi-1
 	MPI_Irecv(&recv_size_i,1,MPI_INT, BLOCK_OWNER ( BLOCK_LOW ( id , nprocs , n ) - 1 ,nprocs , n ),LOWER_COUNT,MPI_COMM_WORLD,&request_down);
-        
+     	
+	printf("[%d]ready to receive from %d\n", id, BLOCK_OWNER ( BLOCK_LOW ( id , nprocs , n ) - 1 ,nprocs , n ));   
 
 //receive count of members of array Xf+1
 	MPI_Irecv(&recv_size_f,1,MPI_INT, BLOCK_OWNER ( BLOCK_LOW ( id+1 , nprocs , n )  ,nprocs , n ),UPPER_COUNT,MPI_COMM_WORLD,&request_up);
+
+	printf("[%d]ready to receive from %d\n", id , BLOCK_OWNER(BLOCK_LOW(id+1, nprocs, n ) ,nprocs, n));
         
 //send xi count 
 MPI_Send(&sizei, 1,MPI_INT,BLOCK_OWNER (BLOCK_LOW (id, nprocs, n) -1 ,nprocs, n),UPPER_COUNT,MPI_COMM_WORLD);
