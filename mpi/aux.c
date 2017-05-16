@@ -402,37 +402,37 @@ void preOrder(Node *root, Tree ****hash, int i, int j, Row* insert, Row* delete,
     }
 }
 
-void nextGen(Tree ****hash, Row *insert, Row *delete, int n) {
-    /*int i, j;
+void nextGen(Tree ****hash, Row *insert, Row *delete, int n, int id, int nprocs) {
+    int i, j;
     List *aux;
-*/
+
     /** Initialize its insert and delete Linked-Lists */
     init(insert);
     init(delete);
 
     /** For each coord (x, y) add to list the curret and the potentialy dead cells
         that may become alive */
- /*   for (i = (id*n)/np+1; i < ((id+1)*n)/np-1; i++) {
+    for (i = 1; i < BLOCK_SIZE(id, nprocs, n) - 1; i++) {
         for (j = 0; j < n; j++) {
-            preOrder((*hash)[i][j]->root, hash, i, j, insert[tid], delete[tid], n);
+            preOrder((*hash)[i][j]->root, hash, i, j, insert, delete, n);
         }
     }
 
     for (j = 0; j < n; j++) {
-        preOrderi((*hash)[(id*n)/np][j]->root, hash, (id*n)/np, j, insert[tid], delete[tid], n);
+        preOrderi((*hash)[0][j]->root, hash, 0, j, insert, delete, n);
     }
 
     for (j = 0; j < n; j++) {
-        preOrderf((*hash)[((id+1)*n)/np][j]->root, hash, ((id+1)*n)/np, j, insert[tid], delete[tid], n);
+        preOrderf((*hash)[BLOCK_SIZE(id, nprocs, n)][j]->root, hash, BLOCK_SIZE(id, nprocs, n), j, insert, delete, n);
     }
 
-    if(pcGetID()==0){
+    /*if(pcGetID()==0){
       for (j = 0; j < n; j++) {
-          preOrderi1((*hash)[n][j]->root, hash, n, j, insert[tid], delete[tid], n);
+          preOrderi1((*hash)[n][j]->root, hash, n, j, insert, delete, n);
       }
     }else{
       for (j = 0; j < n; j++) {
-          preOrderi1((*hash)[(id*n)/np-1][j]->root, hash, (id*n)/np-1, j, insert[tid], delete[tid], n);
+          preOrderi1((*hash)[(id*n)/np-1][j]->root, hash, (id*n)/np-1, j, insert, delete, n);
       }
     }
 
@@ -446,18 +446,18 @@ void nextGen(Tree ****hash, Row *insert, Row *delete, int n) {
       }
     }*/
     /** For each node on the delete list remove it */
-    /*for (aux = delete[tid]->first; aux!=NULL; aux=aux->next) {
+    for (aux = delete->first; aux!=NULL; aux=aux->next) {
         (*hash)[aux->data.x][aux->data.y]->root = deleteNode((*hash)[aux->data.x][aux->data.y]->root,aux->data.z);
         (*hash)[aux->data.x][aux->data.y]->size=((*hash)[aux->data.x][aux->data.y]->size) - 1;
     }
-*/
+
     /** For each node on the insert list add or ignore if already exists a new live cell */
  
-/*   for (aux = insert[tid]->first; aux!=NULL; aux=aux->next) {
+   for (aux = insert->first; aux!=NULL; aux=aux->next) {
         (*hash)[aux->data.x][aux->data.y]->root = insertTree(aux->data.z, (*hash)[aux->data.x][aux->data.y]->root);
         (*hash)[aux->data.x][aux->data.y]->size=((*hash)[aux->data.x][aux->data.y]->size) + 1;
     }
-*/
+
     /** Free threads insert and delete Linked-Lists */
     freeList(insert);
     freeList(delete);
@@ -478,8 +478,8 @@ int readFile(Tree ****hash, char *file, int id, int nprocs) {
     fscanf(fp, "%d", &n);
 
     /** For each cell in a 2d dimensional space aloc a pointer of pointer of pointer */
-    (*hash) = (Tree***)malloc( BLOCK_SIZE(id, nprocs, n) * n *sizeof(Tree**));
-    for (i = 0; i < BLOCK_SIZE(id, nprocs, n); i++) {
+    (*hash) = (Tree***)malloc( ( 2 + BLOCK_SIZE(id, nprocs, n)) * n *sizeof(Tree**));
+    for (i = 0; i < BLOCK_SIZE(id, nprocs, n) + 2; i++) {
         /** For each row aloc a pointer of pointer */
         (*hash)[i]=(Tree**)malloc(n*sizeof(Tree*));
         for (j = 0; j < n; j++) {
@@ -491,9 +491,10 @@ int readFile(Tree ****hash, char *file, int id, int nprocs) {
 
     /** Initialize the given cells */
     while (fscanf(fp,"%d %d %d", &x, &y, &z)==3) {
-        if( BLOCK_OWNER( x, nprocs, n ) == id ) {
-          (*hash)[x - BLOCK_LOW(id, nprocs, n)][y]->root=insertTree(z,(*hash)[x][y]->root);
-          (*hash)[x - BLOCK_LOW(id, nprocs, n)][y]->size=((*hash)[x][y]->size) + 1;
+	//printf("[%d] %d %d\n", id, BLOCK_OWNER( x, nprocs, n), x);
+        if( BLOCK_OWNER( x, nprocs, n) == id ) {
+          (*hash)[1 + x - BLOCK_LOW(id, nprocs, n)][y]->root=insertTree(z,(*hash)[1 + x - BLOCK_LOW(id, nprocs, n)][y]->root);
+          (*hash)[1 + x - BLOCK_LOW(id, nprocs, n)][y]->size=((*hash)[1 + x - BLOCK_LOW(id, nprocs, n)][y]->size) + 1;
         }
     }
 
