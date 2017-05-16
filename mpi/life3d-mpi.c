@@ -76,7 +76,7 @@ int main(int argc, char *argv[]) {
           fillArray((*hash)[1][j]->root, nodesi, j, &aux);
         }
 
-        k=0;
+        aux=0;
         for ( j = 0; j < n; j++) {
           fillArray((*hash)[BLOCK_SIZE(id,nprocs,n)][j]->root, nodesf, j, &aux);
         }
