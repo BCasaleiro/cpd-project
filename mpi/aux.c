@@ -418,22 +418,31 @@ void nextGen(Tree ****hash, Row *insert, Row *delete, int n, int id, int nprocs)
         }
     }
 
+	printf("[%d] Preorder1\n", id);
+
     for (j = 0; j < n; j++) {
         preOrderi((*hash)[1][j]->root, hash, 1, j, insert, delete, n);
     }
+
+	printf("[%d] Preorder2\n", id);
 
     for (j = 0; j < n; j++) {
         preOrderf((*hash)[BLOCK_SIZE(id, nprocs, n)][j]->root, hash, BLOCK_SIZE(id, nprocs, n), j, insert, delete, n);
     }
 
+	printf("[%d] Preorder3\n", id);
+
     for (j = 0; j < n; j++) {
         preOrderi1((*hash)[0][j]->root, hash, 0, j, insert, delete, n);
     }
 
+	printf("[%d] Preorder4\n", id);
+
     for (j = 0; j < n; j++) {
-        preOrderf1((*hash)[BLOCK_SIZE(id, nprocs, n)+1][j]->root, hash, BLOCK_SIZE(id, nprocs, n)+1, j, insert[tid], delete[tid], n);
+        preOrderf1((*hash)[BLOCK_SIZE(id, nprocs, n)+1][j]->root, hash, BLOCK_SIZE(id, nprocs, n)+1, j, insert, delete, n);
     }
 
+	printf("[%d] Preorder5\n", id);
     
     /** For each node on the delete list remove it */
     for (aux = delete->first; aux!=NULL; aux=aux->next) {

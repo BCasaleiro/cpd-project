@@ -142,6 +142,7 @@ int main(int argc, char *argv[]) {
 	      MPI_Wait(&request_vdown,&status_vdown);
         MPI_Wait(&request_vup,&status_vup);
 
+	/*
 	size_t o;
 	printf("[%d] Sent xi [ ", id);
 	for (o = 0; o < 2*sizei; o++) {
@@ -166,6 +167,7 @@ int main(int argc, char *argv[]) {
 		printf("%d ", recv_nodesf[o]);
 	}
 	printf("]\n");
+	*/
 
         for(j=0;j<2*recv_size_f;j++){
             (*hash)[0][recv_nodesi[j]]->root = insertTree(recv_nodesi[j+1], (*hash)[0][recv_nodesi[j]]->root, &(*hash)[0][recv_nodesi[j]]->size);
@@ -175,6 +177,8 @@ int main(int argc, char *argv[]) {
         for(j=0;j<2*recv_size_f;j++){
             (*hash)[0][recv_nodesf[j]]->root = insertTree(recv_nodesf[j+1], (*hash)[0][recv_nodesf[j]]->root, &(*hash)[0][recv_nodesf[j]]->size);
         }
+
+	printTree(hash, n, id, nprocs);
 
         /** Compute next generation */
         nextGen(hash, insert, delete, n, id, nprocs);
