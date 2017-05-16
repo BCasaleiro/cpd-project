@@ -4,6 +4,11 @@
 #include<omp.h>
 #include"tree.h"
 
+#define BLOCK_LOW(id,p,n)  ((id)*(n)/(p))
+#define BLOCK_HIGH(id,p,n) (BLOCK_LOW((id)+1,p,n)-1)
+#define BLOCK_SIZE(id,p,n) (BLOCK_HIGH(id,p,n)-BLOCK_LOW(id,p,n)+1)
+#define BLOCK_OWNER(index,p,n) (((p)*((index)+1)-1)/(n))
+
 extern omp_lock_t lck_a;
 
 /** Return the height of a node */
@@ -130,10 +135,10 @@ Node* insertTree(int key, Node* node) {
     return node;
 }
 
-void display_avl(Node* t, int x, int y, int id) {
+void display_avl(Node* t, int x, int y, int id, int nprocs) {
     if (t == NULL)
     return;
-    display_avl(t->left, x, y,id);
+    display_avl(t->left, x, y,id, nprocs);
     printf("[%d] %d %d %d\n", id, x, y, t->data);
 
     /*if(t->left != NULL)
@@ -143,16 +148,16 @@ void display_avl(Node* t, int x, int y, int id) {
     printf("\n");*/
 
 
-    display_avl(t->right, x, y,id);
+    display_avl(t->right, x, y,id, nprocs);
 }
 
-void printTree(Tree ****hash, int n, int id) {
+void printTree(Tree ****hash, int n, int id, int nprocs) {
     int i,j;
-    for (i = 0; i < n; i++) {
+    for (i = 0; i <  2 + BLOCK_SIZE(id, nprocs, n); i++) {
         for (j = 0; j < n; j++) {
             if ((*hash)[i][j]->size!=0) {
                 //printf("%d %d ", i, j);
-                display_avl((*hash)[i][j]->root, i, j, id);
+                display_avl((*hash)[i][j]->root, i, j, id, nprocs);
                 //printf("\n");
             }
         }
