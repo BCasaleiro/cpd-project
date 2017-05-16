@@ -64,7 +64,7 @@ int main(int argc, char *argv[]) {
         }
 
         for(j=0; j<n; j++){
-          sizef = (*hash)[BLOCK_SIZE(id, nprocs, n)+1][j]->size + sizef;
+          sizef = (*hash)[BLOCK_SIZE(id,nprocs,n)][j]->size + sizef;
         }
 
         //alloc memory for sending arrays
@@ -78,7 +78,7 @@ int main(int argc, char *argv[]) {
 
         k=0;
         for ( j = 0; j < n; j++) {
-          fillArray((*hash)[BLOCK_SIZE(id, nprocs, n)+1][j]->root, nodesf, j, &aux);
+          fillArray((*hash)[BLOCK_SIZE(id,nprocs,n)][j]->root, nodesf, j, &aux);
         }
 
         //receive count of members of array Xi-1
@@ -110,8 +110,8 @@ int main(int argc, char *argv[]) {
         //send receive messages
 
 
-        printf("[%d] sent lower_count: %d; sent  upper_count: %d \n ",id, sizei,sizef);
-        printf("[%d] received lower_count: %d; received upper_count: %d \n ",id, recv_size_i,recv_size_f);
+        printf("[%d] sent lower_count: %d; sent  upper_count: %d\n",id, sizei,sizef);
+        printf("[%d] received lower_count: %d; received upper_count: %d\n",id, recv_size_i,recv_size_f);
 
         /** Compute next generation */
 

@@ -230,13 +230,12 @@ void freeTree(Tree ****hash, int n) {
 }
 
 void fillArray(Node* t, int* nodes, int y, int *k) {
-    if (t == NULL)
-    return;
+    if (t == NULL) return;
+
     fillArray(t->left, nodes, y, k);
     nodes[*k] = y;
     nodes[*k + 1] = t->data;
     *k=*k + 2;
-
 
     fillArray(t->right, nodes, y, k);
 }
