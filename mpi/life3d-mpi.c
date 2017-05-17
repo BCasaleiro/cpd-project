@@ -181,32 +181,37 @@ int main(int argc, char *argv[]) {
 	//printTree(hash, n, id, nprocs);
 
         /** Compute next generation */
-        nextGen(hash, insert, delete, n, id, nprocs);
+       nextGen(hash, insert, delete, n, id, nprocs);
 
-        for(j=0;j<2*recv_size_i;j++){
-            dispose( (*hash)[0][recv_nodesi[j]]->root );
+        for(j=0;j<n;j++){
+            dispose( (*hash)[0][j]->root );
+		(*hash)[0][j]->root = NULL;
         }
 
-        for(j=0;j<2*recv_size_f;j++){
-            dispose( (*hash)[BLOCK_SIZE(id,nprocs,n)+1][recv_nodesf[j]]->root );
+        for(j=0;j<n;j++){
+            dispose( (*hash)[BLOCK_SIZE(id,nprocs,n)+1][j]->root );
+		(*hash)[BLOCK_SIZE(id,nprocs,n)+1][j]->root = NULL;
         }
+//	printf("[%d] %dªgen waiting\n", id, i + 1);	
+	MPI_Barrier(MPI_COMM_WORLD);
+//	printf("[%d] %dªgen done\n", id, i + 1);
 
     }
-    fflush(stdout);
-    MPI_Barrier(MPI_COMM_WORLD);
+
+    //fflush(stdout);
     printfinalTree(hash, n, id, nprocs);
+
     /** Free Linked Lists */
-    //free(insert[i]);
-    //free(delete[i]);
+
+    free(insert);
+    free(delete);
 
     /** Free Tree */
     //freeTree(hash, n);
     MPI_Finalize();
-
+//	printf("%d finalize\n", id);
     /** Print tree to stdout */
     //printTree(hash, n);
-
-
 
     return 0;
 }
