@@ -200,9 +200,17 @@ int main(int argc, char *argv[]) {
     }
 
     //fflush(stdout);
-    printfinalTree(hash, n, id, nprocs);
-
+    //printfinalTree(hash, n, id, nprocs);
+    //fflush(stdout);
     /** Free Linked Lists */
+
+
+
+	if(id == 0){
+		printfinalTree(hash, n, id, nprocs);
+		
+		Rec
+	} 
 
     free(insert);
     free(delete);
