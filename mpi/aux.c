@@ -281,7 +281,7 @@ void preOrderf(Node *root, Tree ****hash, int i, int j, Row* insert, Row* delete
     }
 }
 
-void preOrder(Node *root, Tree ****hash, int i, int j, Row* insert, Row* delete, int n) {
+void preOrder(Node *root, Tree ****hash, int i, int j, Row* insert, Row* delete, int n, int id, int nprocs) {
     localization x;
     int c;
     if(root != NULL) {
@@ -292,7 +292,7 @@ void preOrder(Node *root, Tree ****hash, int i, int j, Row* insert, Row* delete,
         if(c<2||c>4){
             add(delete, x);
         }
-
+	if( i < BLOCK_SIZE(id, nprocs, n) ) {
         if (i==n-1) {
             x.x = 0;
             x.y = j;
@@ -306,7 +306,8 @@ void preOrder(Node *root, Tree ****hash, int i, int j, Row* insert, Row* delete,
         if (c==2||c==3) {
             add(insert, x);
         }
-
+	}
+	if( i > 1 ) {
         if (i==0) {
             x.x = n-1;
             x.y = j;
@@ -316,10 +317,11 @@ void preOrder(Node *root, Tree ****hash, int i, int j, Row* insert, Row* delete,
             x.y = j;
             x.z = root->data;
         }
-        c = countNeighbours(hash,x, n);
+        c = countNeighbours(hash,x, n);	
         if (c==2||c==3) {
             add(insert, x);
         }
+	}
 
         if (j==n-1) {
             x.x = i;
@@ -334,7 +336,7 @@ void preOrder(Node *root, Tree ****hash, int i, int j, Row* insert, Row* delete,
         if (c==2||c==3) {
             add(insert, x);
         }
-
+	
         if (j==0) {
             x.x = i;
             x.y = n-1;
@@ -347,8 +349,7 @@ void preOrder(Node *root, Tree ****hash, int i, int j, Row* insert, Row* delete,
         c = countNeighbours(hash,x, n);
         if (c==2||c==3) {
             add(insert, x);
-        }
-
+	}
         if (root->data==n-1) {
             x.x = i;
             x.y = j;
@@ -377,8 +378,8 @@ void preOrder(Node *root, Tree ****hash, int i, int j, Row* insert, Row* delete,
             add(insert, x);
         }
 
-        preOrder(root->left, hash, i, j, insert, delete, n);
-        preOrder(root->right, hash, i, j, insert, delete, n);
+        preOrder(root->left, hash, i, j, insert, delete, n, id, nprocs);
+        preOrder(root->right, hash, i, j, insert, delete, n, id, nprocs);
     }
 }
 
@@ -392,12 +393,12 @@ void nextGen(Tree ****hash, Row *insert, Row *delete, int n, int id, int nprocs)
 
     /** For each coord (x, y) add to list the curret and the potentialy dead cells
         that may become alive */
-    for (i = 2; i < BLOCK_SIZE(id, nprocs, n) - 1; i++) {
+    for (i = 1; i <= BLOCK_SIZE(id, nprocs, n); i++) {
         for (j = 0; j < n; j++) {
-            preOrder((*hash)[i][j]->root, hash, i, j, insert, delete, n);
+            preOrder((*hash)[i][j]->root, hash, i, j, insert, delete, n, id, nprocs);
         }
     }
-
+/*
 //	printf("[%d] Preorder1\n", id);
 
     for (j = 0; j < n; j++) {
@@ -411,15 +412,15 @@ void nextGen(Tree ****hash, Row *insert, Row *delete, int n, int id, int nprocs)
     }
 
 //	printf("[%d] Preorder3\n", id);
-
+*/
     for (j = 0; j < n; j++) {
-       // preOrderi1((*hash)[0][j]->root, hash, 0, j, insert, delete, n);
+       preOrderi1((*hash)[0][j]->root, hash, 0, j, insert, delete, n);
     }
 
 //	printf("[%d] Preorder4\n", id);
 
    for (j = 0; j < n; j++) {
-        //preOrderf1((*hash)[BLOCK_SIZE(id, nprocs, n)+1][j]->root, hash, BLOCK_SIZE(id, nprocs, n)+1, j, insert, delete, n);
+        preOrderf1((*hash)[BLOCK_SIZE(id, nprocs, n)+1][j]->root, hash, BLOCK_SIZE(id, nprocs, n)+1, j, insert, delete, n);
     }
 
 //	printf("[%d] Preorder5\n", id);

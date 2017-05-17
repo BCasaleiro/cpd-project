@@ -183,6 +183,7 @@ int main(int argc, char *argv[]) {
         /** Compute next generation */
        nextGen(hash, insert, delete, n, id, nprocs);
 
+
         for(j=0;j<n;j++){
             dispose( (*hash)[0][j]->root );
 		(*hash)[0][j]->root = NULL;
