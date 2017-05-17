@@ -28,7 +28,7 @@ int main(int argc, char *argv[]) {
 	MPI_Request request_vdown;
 	MPI_Status status_vup;
 	MPI_Status status_vdown;
-    MPI_Request request;
+    //MPI_Request request;
     MPI_Status status;
 
 
@@ -209,20 +209,20 @@ int main(int argc, char *argv[]) {
     /** Free Linked Lists */
 
 
-    size_t id_i;
+    size_t id_i, o;
     int size_points;
     int* points;
 	if(id == 0){
 		printfinalTree(hash, n, id, nprocs);
-
-		for (id_i = 1; id_i < n_procs; id_i++) {
+		fflush(stdout);
+		for (id_i = 1; id_i < nprocs; id_i++) {
             MPI_Recv(&size_points, 1, MPI_INT, id_i, POINT_S, MPI_COMM_WORLD, &status);
             points = (int*) malloc(3 * size_points * sizeof(int));
             MPI_Recv(points, (3*size_points), MPI_INT, id_i, POINT_V, MPI_COMM_WORLD, &status);
             for ( o = 0; o < 3*size_points; o+=3 ) {
-                printf("%d %d %d\n", points[o], points[o+1], points[o+2])
+                printf("%d %d %d\n", points[o], points[o+1], points[o+2]);
             }
-            free(points)
+            free(points);
         }
 	} else {
         sizei = 0;
@@ -233,13 +233,19 @@ int main(int argc, char *argv[]) {
         }
         MPI_Send(&sizei, 1, MPI_INT, 0, POINT_S, MPI_COMM_WORLD);
 
+	//printf("[%d] point size: %d", id, sizei);
+	aux = 0;
         points = (int*) malloc(3*sizei*sizeof(int));
         for (o = 1; o <= BLOCK_SIZE(id,nprocs,n); o++) {
             for(j = 0; j < n; j++) {
-                fillArray2((*hash)[o][j]->root, nodesi, o, j, &aux);
+                fillArray2((*hash)[o][j]->root, points, o, j, &aux, n, id, nprocs);
             }
         }
+
+	//for (o = 0; o < 3*sizei; o++) { printf("%d ", points[])	
+
         MPI_Send(points, (3*sizei), MPI_INT, 0,POINT_V,MPI_COMM_WORLD);
+	free(points);
     }
 
     free(insert);
