@@ -1,9 +1,12 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
+#include<omp.h>
 #include"tree.h"
 #include"list.h"
 #include"aux.h"
+
+extern omp_lock_t lck_a;
 
 /** Count the alive neighboors of a cell */
 int countNeighbours(Tree ****hash, localization x, int n) {
@@ -94,7 +97,7 @@ void preOrderf1(Node *root, Tree ****hash, int i, int j, Row* insert, Row* delet
 void preOrderi1(Node *root, Tree ****hash, int i, int j, Row* insert, Row* delete, int n) {
     localization x;
     int c;
-    if(root != NULL) { 
+    if(root != NULL) {
         x.x = i + 1;
         x.y = j;
         x.z = root->data;
@@ -317,7 +320,7 @@ void preOrder(Node *root, Tree ****hash, int i, int j, Row* insert, Row* delete,
             x.y = j;
             x.z = root->data;
         }
-        c = countNeighbours(hash,x, n);	
+        c = countNeighbours(hash,x, n);
         if (c==2||c==3) {
             add(insert, x);
         }
@@ -336,7 +339,7 @@ void preOrder(Node *root, Tree ****hash, int i, int j, Row* insert, Row* delete,
         if (c==2||c==3) {
             add(insert, x);
         }
-	
+
         if (j==0) {
             x.x = i;
             x.y = n-1;
@@ -383,65 +386,75 @@ void preOrder(Node *root, Tree ****hash, int i, int j, Row* insert, Row* delete,
     }
 }
 
-void nextGen(Tree ****hash, Row *insert, Row *delete, int n, int id, int nprocs) {
-    int i, j;
+void nextGen(Tree ****hash, Row **insert, Row **delete, int n, int id, int nprocs) {
+    int i, j, tid;
     List *aux;
 
+    #pragma omp parallel private(tid,aux)
+    {
+        /** Get thread number */
+        tid = omp_get_thread_num();
     /** Initialize its insert and delete Linked-Lists */
-    init(insert);
-    init(delete);
+        init(insert[tid]);
+        init(delete[tid]);
 
-    /** For each coord (x, y) add to list the curret and the potentialy dead cells
-        that may become alive */
-    for (i = 1; i <= BLOCK_SIZE(id, nprocs, n); i++) {
-        for (j = 0; j < n; j++) {
-            preOrder((*hash)[i][j]->root, hash, i, j, insert, delete, n, id, nprocs);
+        /** For each coord (x, y) add to list the curret and the potentialy dead cells
+            that may become alive */
+        #pragma omp for private(j)
+        for (i = 1; i <= BLOCK_SIZE(id, nprocs, n); i++) {
+            for (j = 0; j < n; j++) {
+                preOrder((*hash)[i][j]->root, hash, i, j, insert[tid], delete[tid], n, id, nprocs);
+            }
         }
+    /*
+    //	printf("[%d] Preorder1\n", id);
+
+        for (j = 0; j < n; j++) {
+            preOrderi((*hash)[1][j]->root, hash, 1, j, insert, delete, n);
+        }
+
+    //	printf("[%d] Preorder2\n", id);
+
+        for (j = 0; j < n; j++) {
+            preOrderf((*hash)[BLOCK_SIZE(id, nprocs, n)][j]->root, hash, BLOCK_SIZE(id, nprocs, n), j, insert, delete, n);
+        }
+
+    //	printf("[%d] Preorder3\n", id);
+    */
+        for (j = 0; j < n; j++) {
+           preOrderi1((*hash)[0][j]->root, hash, 0, j, insert[tid], delete[tid], n);
+        }
+
+    //	printf("[%d] Preorder4\n", id);
+
+       for (j = 0; j < n; j++) {
+            preOrderf1((*hash)[BLOCK_SIZE(id, nprocs, n)+1][j]->root, hash, BLOCK_SIZE(id, nprocs, n)+1, j, insert[tid], delete[tid], n);
+        }
+
+    //	printf("[%d] Preorder5\n", id);
+
+        /** For each node on the delete list remove it */
+        for (aux = delete[tid]->first; aux!=NULL; aux=aux->next) {
+            omp_set_lock(&lck_a);
+            (*hash)[aux->data.x][aux->data.y]->root = deleteNode((*hash)[aux->data.x][aux->data.y]->root,aux->data.z);
+            (*hash)[aux->data.x][aux->data.y]->size=((*hash)[aux->data.x][aux->data.y]->size) - 1;
+            omp_unset_lock(&lck_a);
+        }
+
+        /** For each node on the insert list add or ignore if already exists a new live cell */
+
+       for (aux = insert[tid]->first; aux!=NULL; aux=aux->next) {
+            omp_set_lock(&lck_a);
+            (*hash)[aux->data.x][aux->data.y]->root = insertTree(aux->data.z, (*hash)[aux->data.x][aux->data.y]->root, &(*hash)[aux->data.x][aux->data.y]->size);
+            //(*hash)[aux->data.x][aux->data.y]->size=((*hash)[aux->data.x][aux->data.y]->size) + 1;
+            omp_unset_lock(&lck_a);
+
+        }
+
+        /** Free threads insert and delete Linked-Lists */
+        freeList(insert[tid]);
+        freeList(delete[tid]);
     }
-/*
-//	printf("[%d] Preorder1\n", id);
-
-    for (j = 0; j < n; j++) {
-        preOrderi((*hash)[1][j]->root, hash, 1, j, insert, delete, n);
-    }
-
-//	printf("[%d] Preorder2\n", id);
-
-    for (j = 0; j < n; j++) {
-        preOrderf((*hash)[BLOCK_SIZE(id, nprocs, n)][j]->root, hash, BLOCK_SIZE(id, nprocs, n), j, insert, delete, n);
-    }
-
-//	printf("[%d] Preorder3\n", id);
-*/
-    for (j = 0; j < n; j++) {
-       preOrderi1((*hash)[0][j]->root, hash, 0, j, insert, delete, n);
-    }
-
-//	printf("[%d] Preorder4\n", id);
-
-   for (j = 0; j < n; j++) {
-        preOrderf1((*hash)[BLOCK_SIZE(id, nprocs, n)+1][j]->root, hash, BLOCK_SIZE(id, nprocs, n)+1, j, insert, delete, n);
-    }
-
-//	printf("[%d] Preorder5\n", id);
-    
-    /** For each node on the delete list remove it */
-    for (aux = delete->first; aux!=NULL; aux=aux->next) {
-        (*hash)[aux->data.x][aux->data.y]->root = deleteNode((*hash)[aux->data.x][aux->data.y]->root,aux->data.z);
-        (*hash)[aux->data.x][aux->data.y]->size=((*hash)[aux->data.x][aux->data.y]->size) - 1;
-    }
-
-    /** For each node on the insert list add or ignore if already exists a new live cell */
-
-   for (aux = insert->first; aux!=NULL; aux=aux->next) {
-        (*hash)[aux->data.x][aux->data.y]->root = insertTree(aux->data.z, (*hash)[aux->data.x][aux->data.y]->root, &(*hash)[aux->data.x][aux->data.y]->size);
-        //(*hash)[aux->data.x][aux->data.y]->size=((*hash)[aux->data.x][aux->data.y]->size) + 1;
-    }
-
-    /** Free threads insert and delete Linked-Lists */
-    freeList(insert);
-    freeList(delete);
-
 
 }
 

@@ -2,9 +2,12 @@
 #include<stdlib.h>
 #include<string.h>
 #include <mpi.h>
+#include<omp.h>
 #include"list.h"
 #include"tree.h"
 #include"aux.h"
+
+omp_lock_t lck_a;
 
 // COMS TAGS
 #define UPPER_COUNT 1
@@ -19,19 +22,21 @@ int main(int argc, char *argv[]) {
     char name[246];
     int i, k, n, j;
     int id, nprocs;
-    Row *insert, *delete;
-	MPI_Request request_up;
-	MPI_Request request_down;
-	MPI_Status status_up;
-	MPI_Status status_down;
-	MPI_Request request_vup;
-	MPI_Request request_vdown;
-	MPI_Status status_vup;
-	MPI_Status status_vdown;
+    int th=omp_get_max_threads();
+    Row **insert, **delete;
+	  MPI_Request request_up;
+	  MPI_Request request_down;
+	  MPI_Status status_up;
+	  MPI_Status status_down;
+	  MPI_Request request_vup;
+	  MPI_Request request_vdown;
+	  MPI_Status status_vup;
+	  MPI_Status status_vdown;
     //MPI_Request request;
     MPI_Status status;
-	double elapsed_time;
+	  double elapsed_time;
 
+    omp_init_lock(&lck_a);
     if (argc != 3) {
         printf("Usage: life3d-omp <infile> <iterations>.\n");
         exit(-1);
@@ -46,16 +51,25 @@ int main(int argc, char *argv[]) {
     MPI_Init(&argc, &argv);
     MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
     MPI_Comm_rank(MPI_COMM_WORLD, &id);
-	MPI_Barrier(MPI_COMM_WORLD);
-	elapsed_time = - MPI_Wtime();
+	  MPI_Barrier(MPI_COMM_WORLD);
+	  elapsed_time = - MPI_Wtime();
     hash = (Tree****)malloc(sizeof(Tree****));
 
     /** Read File */
     n = readFile(hash, name, id, nprocs);
     //printTree(hash, n, id, nprocs);
 
-    insert=(Row*)malloc(sizeof(Row));
-    delete=(Row*)malloc(sizeof(Row));
+    insert=(Row**)malloc(th*sizeof(Row*));
+    for (i = 0; i < th; i++) {
+        insert[i]=(Row*)malloc(sizeof(Row));
+    }
+
+    /** Create an array of Linked-Lists
+        For each availabre threads create a Linked-List */
+    delete=(Row**)malloc(th*sizeof(Row*));
+    for (i = 0; i < th; i++) {
+        delete[i]=(Row*)malloc(sizeof(Row));
+    }
 
     int sizef, sizei, aux,recv_size_f, recv_size_i;
     sizef=sizei=aux=0;
@@ -243,7 +257,7 @@ int main(int argc, char *argv[]) {
             }
         }
 
-	//for (o = 0; o < 3*sizei; o++) { printf("%d ", points[])	
+	//for (o = 0; o < 3*sizei; o++) { printf("%d ", points[])
 
         MPI_Send(points, (3*sizei), MPI_INT, 0,POINT_V,MPI_COMM_WORLD);
 	free(points);
