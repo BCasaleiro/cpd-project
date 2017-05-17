@@ -12,13 +12,6 @@
 #define UPPER_VECTOR 3
 #define LOWER_VECTOR 4
 
-void free_ltree(Node* node) {
-    if(node == NULL) return;
-    if(node->left != NULL) free_ltree(node->left);
-    if(node->right != NULL) free_ltree(node->right);
-    free(node);
-}
-
 int main(int argc, char *argv[]) {
     Tree ****hash;
     char name[246];
@@ -191,11 +184,11 @@ int main(int argc, char *argv[]) {
         nextGen(hash, insert, delete, n, id, nprocs);
 
         for(j=0;j<2*recv_size_i;j++){
-            free_ltree( (*hash)[0][recv_nodesi[j]]->root );
+            dispose( (*hash)[0][recv_nodesi[j]]->root );
         }
 
         for(j=0;j<2*recv_size_f;j++){
-            free_ltree( (*hash)[BLOCK_SIZE(id,nprocs,n)+1][recv_nodesf[j]]->root );
+            dispose( (*hash)[BLOCK_SIZE(id,nprocs,n)+1][recv_nodesf[j]]->root );
         }
 
     }
