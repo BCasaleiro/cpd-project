@@ -47,4 +47,5 @@ Node *minValueNode(Node *node);
 Node* deleteNode(Node* root, int key);
 
 
-void fillArray(Node* t, int* nodes, int y, int *k); 
+void fillArray(Node* t, int* nodes, int y, int *k);
+void fillArray2(Node* t, int* nodes, int x, int y, int *k); 

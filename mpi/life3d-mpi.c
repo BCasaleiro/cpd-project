@@ -11,6 +11,8 @@
 #define LOWER_COUNT 2
 #define UPPER_VECTOR 3
 #define LOWER_VECTOR 4
+#define POINT_S 5
+#define POINT_V 6
 
 int main(int argc, char *argv[]) {
     Tree ****hash;
@@ -26,6 +28,8 @@ int main(int argc, char *argv[]) {
 	MPI_Request request_vdown;
 	MPI_Status status_vup;
 	MPI_Status status_vdown;
+    MPI_Request request;
+    MPI_Status status;
 
 
     if (argc != 3) {
@@ -193,7 +197,7 @@ int main(int argc, char *argv[]) {
             dispose( (*hash)[BLOCK_SIZE(id,nprocs,n)+1][j]->root );
 		(*hash)[BLOCK_SIZE(id,nprocs,n)+1][j]->root = NULL;
         }
-//	printf("[%d] %dªgen waiting\n", id, i + 1);	
+//	printf("[%d] %dªgen waiting\n", id, i + 1);
 	MPI_Barrier(MPI_COMM_WORLD);
 //	printf("[%d] %dªgen done\n", id, i + 1);
 
@@ -205,12 +209,38 @@ int main(int argc, char *argv[]) {
     /** Free Linked Lists */
 
 
-
+    size_t id_i;
+    int size_points;
+    int* points;
 	if(id == 0){
 		printfinalTree(hash, n, id, nprocs);
-		
-		Rec
-	} 
+
+		for (id_i = 1; id_i < n_procs; id_i++) {
+            MPI_Recv(&size_points, 1, MPI_INT, id_i, POINT_S, MPI_COMM_WORLD, &status);
+            points = (int*) malloc(3 * size_points * sizeof(int));
+            MPI_Recv(points, (3*size_points), MPI_INT, id_i, POINT_V, MPI_COMM_WORLD, &status);
+            for ( o = 0; o < 3*size_points; o+=3 ) {
+                printf("%d %d %d\n", points[o], points[o+1], points[o+2])
+            }
+            free(points)
+        }
+	} else {
+        sizei = 0;
+        for (o = 1; o <= BLOCK_SIZE(id,nprocs,n); o++) {
+            for(j = 0; j < n; j++) {
+                sizei = (*hash)[o][j]->size + sizei;
+            }
+        }
+        MPI_Send(&sizei, 1, MPI_INT, 0, POINT_S, MPI_COMM_WORLD);
+
+        points = (int*) malloc(3*sizei*sizeof(int));
+        for (o = 1; o <= BLOCK_SIZE(id,nprocs,n); o++) {
+            for(j = 0; j < n; j++) {
+                fillArray2((*hash)[o][j]->root, nodesi, o, j, &aux);
+            }
+        }
+        MPI_Send(points, (3*sizei), MPI_INT, 0,POINT_V,MPI_COMM_WORLD);
+    }
 
     free(insert);
     free(delete);

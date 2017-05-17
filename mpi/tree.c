@@ -253,6 +253,19 @@ void fillArray(Node* t, int* nodes, int y, int *k) {
     fillArray(t->right, nodes, y, k);
 }
 
+void fillArray2(Node* t, int* nodes, int x, int y, int *k) {
+    if (t == NULL) return;
+
+    fillArray2(t->left, nodes, x, y, k);
+
+    nodes[*k] = x;
+    nodes[*k + 1] = y;
+    nodes[*k + 2] = t->data;
+    *k=*k + 3;
+
+    fillArray2(t->right, nodes, x, y, k);
+}
+
 Node *minValueNode(Node *node) {
     Node *current = node;
 
