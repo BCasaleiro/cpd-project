@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
 	MPI_Status status_vdown;
     //MPI_Request request;
     MPI_Status status;
-
+	double elapsed_time;
 
     if (argc != 3) {
         printf("Usage: life3d-omp <infile> <iterations>.\n");
@@ -46,7 +46,8 @@ int main(int argc, char *argv[]) {
     MPI_Init(&argc, &argv);
     MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
     MPI_Comm_rank(MPI_COMM_WORLD, &id);
-
+	MPI_Barrier(MPI_COMM_WORLD);
+	elapsed_time = - MPI_Wtime();
     hash = (Tree****)malloc(sizeof(Tree****));
 
     /** Read File */
@@ -253,7 +254,10 @@ int main(int argc, char *argv[]) {
 
     /** Free Tree */
     //freeTree(hash, n);
+	elapsed_time += MPI_Wtime();
     MPI_Finalize();
+
+	printf("%lf\n", elapsed_time);
 //	printf("%d finalize\n", id);
     /** Print tree to stdout */
     //printTree(hash, n);
