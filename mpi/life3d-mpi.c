@@ -12,6 +12,12 @@
 #define UPPER_VECTOR 3
 #define LOWER_VECTOR 4
 
+void free_ltree(Node* node) {
+    if(node == NULL) return;
+    if(node->left != NULL) free_ltree(node->left);
+    if(node->right != NULL) free_ltree(node->right);
+    free(node);
+}
 
 int main(int argc, char *argv[]) {
     Tree ****hash;
@@ -183,6 +189,15 @@ int main(int argc, char *argv[]) {
 
         /** Compute next generation */
         nextGen(hash, insert, delete, n, id, nprocs);
+
+        for(j=0;j<2*recv_size_i;j++){
+            free_ltree( (*hash)[0][recv_nodesi[j]]->root );
+        }
+
+        for(j=0;j<2*recv_size_f;j++){
+            free_ltree( (*hash)[BLOCK_SIZE(id,nprocs,n)+1][recv_nodesf[j]]->root );
+        }
+
     }
     fflush(stdout);
     MPI_Barrier(MPI_COMM_WORLD);
